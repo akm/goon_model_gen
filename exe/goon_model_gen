@@ -1,3 +1,10 @@
 #!/usr/bin/env ruby
 
-require "goon_model_gen"
+# Add lib to LOAD_PATH in development environment
+if File.exist?(File.expand_path("../../.git", __FILE__))
+  $LOAD_PATH << File.expand_path("../../lib", __FILE__)
+end
+
+require "goon_model_gen/cli"
+
+GoonModelGen::Cli.start(ARGV)
