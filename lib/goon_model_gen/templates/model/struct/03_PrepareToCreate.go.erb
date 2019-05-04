@@ -1,0 +1,16 @@
+func (m *<%= struct.name %>) PrepareToCreate() error {
+  m.PrepareFields()
+<%- if struct.fields.any?{|f| f.name == "CreatedAt"} -%>
+<%-   import "time" -%>
+	if m.CreatedAt.IsZero() {
+		m.CreatedAt = time.Now()
+	}
+<%- end -%>
+<%- if struct.fields.any?{|f| f.name == "UpdatedAt"} -%>
+<%-   import "time" -%>
+	if m.UpdatedAt.IsZero() {
+		m.UpdatedAt = time.Now()
+	}
+<%- end -%>
+	return nil
+}

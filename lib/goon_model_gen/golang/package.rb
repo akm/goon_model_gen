@@ -1,33 +1,27 @@
 require "goon_model_gen"
 
-require "goon_model_gen/source/contextual"
-require "goon_model_gen/source/struct"
-require "goon_model_gen/source/enum"
+require "goon_model_gen/golang/struct"
+require "goon_model_gen/golang/enum"
+require "goon_model_gen/golang/file"
 
 module GoonModelGen
-  module Source
-    class File
-      include Contextual
-
+  module Golang
+    class Package
       attr_reader :path
       attr_reader :types
+      attr_reader :files
 
-      # @param path [string]
+      # @param path [String]
       def initialize(path)
         @path = path
         @types = []
+        @files = []
       end
 
-      def basename
-        ::File.basename(path, '.*')
-      end
-
-      # @param name [string]
-      # @return [Struct]
       def new_struct(name)
         Struct.new(name).tap do |s|
-          s.context = self.context
           types.push(s)
+          s.package = self
         end
       end
 
@@ -37,8 +31,22 @@ module GoonModelGen
       # @return [Enum]
       def new_enum(name, base_type, map)
         Enum.new(name, base_type, map).tap do |t|
-          t.context = self.context
           types.push(t)
+          t.package = self
+        end
+      end
+
+      # @param name [string]
+      # @return [File]
+      def find_or_new_file(name)
+        files.detect{|f| f.name == name} || new_file(name)
+      end
+
+      # @param name [string]
+      # @return [File]
+      def new_file(name)
+        File.new(self, name).tap do |f|
+          files.push(f)
         end
       end
 

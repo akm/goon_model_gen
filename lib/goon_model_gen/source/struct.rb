@@ -6,9 +6,8 @@ require "goon_model_gen/source/field"
 module GoonModelGen
   module Source
     class Struct < Type
-      attr_reader :id_name, :id_type
-      attr_reader :display_method
-      attr_reader :methods # key: method_name, value: true|false|string(file_suffix)
+      attr_accessor :id_name, :id_type
+      attr_accessor :display_method
 
       def fields
         @fields ||= []

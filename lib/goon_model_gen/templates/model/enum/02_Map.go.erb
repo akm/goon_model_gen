@@ -1,0 +1,5 @@
+var <%= type.name %>Map = map[<%= type.name %>]string{
+<%-   type.enum_map.each do |key, name| -%>
+  <%= key.inspect %>: <%= name.inspect %>,
+<%-   end -%>
+}

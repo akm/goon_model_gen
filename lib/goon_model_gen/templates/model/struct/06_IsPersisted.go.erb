@@ -1,0 +1,3 @@
+func (m *<%= struct.name %>) IsPersisted() bool {
+	return m.ID != <%= struct.id_field.type.zero_value_expression %>
+}

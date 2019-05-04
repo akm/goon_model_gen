@@ -7,7 +7,7 @@ module GoonModelGen
     class Field
       include Contextual
 
-      attr_reader :name
+      attr_reader :name, :type
       attr_reader :required
       attr_reader :unique
       attr_reader :tags # Hash<string,Array[string]> ex. for datastore, validate, json, etc...

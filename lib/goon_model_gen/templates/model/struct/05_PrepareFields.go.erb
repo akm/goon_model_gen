@@ -1,0 +1,8 @@
+func (m *<%= struct.name %>) PrepareFields() error {
+<%- struct.fields.each do |field| -%>
+<%-   if field.prepare_method.present? -%>
+  m.<%= field.name %> = m.<%= field.name %>.<%= field.prepare_method %>()
+<%-   end -%>
+<%- end -%>
+	return nil
+}

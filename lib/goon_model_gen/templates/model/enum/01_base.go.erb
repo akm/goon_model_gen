@@ -1,0 +1,9 @@
+<%- package "model" -%>
+
+type <%= type.name %> <%= type.base %>
+
+const (
+<%-   type.enum_map.each do |key, name| -%>
+  <%= type.name %><%= name.camelize %> <%= type.name %> = <%= key.inspect %>
+<%-   end -%>
+)

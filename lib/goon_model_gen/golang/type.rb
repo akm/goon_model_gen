@@ -1,21 +1,15 @@
 require "goon_model_gen"
 
-require "goon_model_gen/source/contextual"
-
 module GoonModelGen
-  module Source
+  module Golang
     class Type
-      include Contextual
-
       attr_reader :name
       attr_accessor :package
-      attr_accessor :methods # key: method_name, value: true|false|string(file_suffix)
 
       # @param name [string]
       def initialize(name)
         @name = name
       end
-
     end
   end
 end

@@ -32,34 +32,34 @@ module GoonModelGen
           context.files.push(f)
         end
 
-        (raw['types'] || []).each do |name, t|
-          if t['fields'].is_a?(Hash)
-            load_struct(f, name, t)
-          elsif t['enum_map'].is_a?(Hash) && t['base']
-            load_enum(f, name, t['base'], t['enum_map'])
-          else
-
-          end
+        (raw['types'] || {}).each do |name, t|
+          source_type =
+            if t['fields'].is_a?(Hash)
+              load_struct(f, name, t).tap do |s|
+                if g = t['goon']
+                  s.id_name = g['id_name']
+                  s.id_type = g['id_type']
+                end
+              end
+            elsif t['enum_map'].is_a?(Hash) && t['base']
+              f.new_enum(name, t['base'], t['enum_map'])
+            else
+              raise "Unsupported type definition named '#{name}': #{t.inspect}"
+            end
+          source_type.methods = t['methods']
         end
       end
 
       # @param f [File]
       # @param name [String]
       # @param t [Hash<String,Hash>|Hash<String,String>] definition of struct from YAML
+      # @return [Struct]
       def load_struct(f, name, t)
         f.new_struct(name).tap do |s|
           t['fields'].each do |field_name, attrs|
             s.new_field(field_name, attrs)
           end
         end
-      end
-
-      # @param f [File]
-      # @param name [String]
-      # @param base_type [String]
-      # @param map [Hash<Object,Hash>] elements of enum from YAML
-      def load_enum(f, name, base_type, map)
-        f.new_enum(name, base_type, map)
       end
 
     end
