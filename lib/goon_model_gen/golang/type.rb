@@ -10,6 +10,20 @@ module GoonModelGen
       def initialize(name)
         @name = name
       end
+
+      # @param pkgs [Packages]
+      def resolve(pkgs)
+        raise NotImplementedError, "#{self.type.name} doesn't implement resolve method"
+      end
+
+      # @return [string]
+      def qualified_name
+        if package && package.name
+          "#{package.name}.#{name}"
+        else
+          name
+        end
+      end
     end
   end
 end

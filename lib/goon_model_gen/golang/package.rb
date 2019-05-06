@@ -18,11 +18,21 @@ module GoonModelGen
         @files = []
       end
 
+      def basename
+        path ? ::File.basename(path, '.*') : nil
+      end
+
+      def name
+        basename.gsub(/\-\_/, '').downcase
+      end
+
+      def add(type)
+        types.push(type)
+        type.package = self
+      end
+
       def new_struct(name)
-        Struct.new(name).tap do |s|
-          types.push(s)
-          s.package = self
-        end
+        Struct.new(name).tap{|s| add(s) }
       end
 
       # @param name [string]
@@ -30,10 +40,7 @@ module GoonModelGen
       # @param map [Hash<Object,Hash>] elements of enum from YAML
       # @return [Enum]
       def new_enum(name, base_type, map)
-        Enum.new(name, base_type, map).tap do |t|
-          types.push(t)
-          t.package = self
-        end
+        Enum.new(name, base_type, map).tap{|s| add(s) }
       end
 
       # @param name [string]
@@ -48,6 +55,19 @@ module GoonModelGen
         File.new(self, name).tap do |f|
           files.push(f)
         end
+      end
+
+      # @return [Hash<String,Type>]
+      def name_to_type_map
+        @name_to_type_map ||= types.each_with_object({}) do |t,d|
+          d[t.name] = t
+        end
+      end
+
+      # @param name [string]
+      # @param [Type]
+      def lookup(name)
+        name_to_type_map[name]
       end
 
     end

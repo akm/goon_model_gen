@@ -2,6 +2,8 @@ require "goon_model_gen"
 
 require "goon_model_gen/source/context"
 require "goon_model_gen/golang/package"
+require "goon_model_gen/golang/packages"
+require "goon_model_gen/golang/datastore_supported"
 
 require "active_support/core_ext/string"
 
@@ -15,11 +17,14 @@ module GoonModelGen
 
 
     # @param context [Source::Context]
-    # @return [Array<Golang::Package>]
+    # @return [Golang::Packages]
     def build(context)
-      context.files.map do |f|
-        package_path = File.join(base_package_path, f.basename)
-        build_package(package_path, f.types)
+      Golang::Packages.new.tap do |r|
+        context.files.each do |f|
+          package_path = File.join(base_package_path, f.basename)
+          r << build_package(package_path, f.types)
+        end
+        r.resolve_type_names(Golang::DatastoreSupported.packages)
       end
     end
 
@@ -57,7 +62,7 @@ module GoonModelGen
           s.new_field(t.id_name, t.id_type, tags, goon_id: true)
         end
         t.fields.each do |f|
-          s.new_field(f.name, f.type, f.tags)
+          s.new_field(f.name, f.type_name, f.tags)
         end
       end
     end
@@ -74,7 +79,7 @@ module GoonModelGen
         template = m2t[name]
         parts = [t.name.underscore]
         parts << suffix if suffix.is_a?(String)
-        filename = parts.join('_')
+        filename = parts.join('_') << '.go'
         file = go_type.package.find_or_new_file(filename)
         file.new_sentence(File.join(template_base, template), go_type)
       end

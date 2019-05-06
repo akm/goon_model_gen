@@ -6,7 +6,6 @@ require "goon_model_gen/golang/field"
 module GoonModelGen
   module Golang
     class Struct < Type
-      attr_reader :id_name, :id_type
       attr_accessor :display_method
 
       def fields
@@ -18,12 +17,20 @@ module GoonModelGen
       # @param tags [Hash<String,Array<String>>]
       def new_field(name, t, tags, options = {})
         Field.new(name, t, tags, options).tap do |f|
-          self.fields.push(f)
+          f.struct = self
+          fields.push(f)
         end
       end
 
       def id_field
         fields.detect(&:goon_id)
+      end
+
+      # @param pkgs [Packages]
+      def resolve(pkgs)
+        fields.each do |f|
+          f.resolve(pkgs)
+        end
       end
 
     end
