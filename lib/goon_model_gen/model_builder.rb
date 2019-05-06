@@ -68,6 +68,7 @@ module GoonModelGen
     # @return [Golang::Struct]
     def build_struct(t, pkg)
       pkg.new_struct(t.name).tap do |s|
+        s.ref_name = t.ref_name
         if t.id_name && t.id_type
           tags = {
             'goon' => ['id'],

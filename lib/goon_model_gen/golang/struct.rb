@@ -6,7 +6,7 @@ require "goon_model_gen/golang/field"
 module GoonModelGen
   module Golang
     class Struct < Type
-      attr_accessor :display_method
+      attr_accessor :ref_name
 
       def fields
         @fields ||= []

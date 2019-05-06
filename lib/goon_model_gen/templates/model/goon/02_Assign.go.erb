@@ -6,8 +6,8 @@ if ref_type
 -%>
 func (m *<%= type.name %>) Assign(r <%= ref_type.qualified_name %>) error {
 	r.ID = m.ID
-<%-   if type.display_method -%>
-	r.Name = m.<%= type.display_method %>()
+<%-   if type.ref_name.present? -%>
+	r.Name = m.<%= type.ref_name %>
 <%-   end -%>
 	return nil
 }

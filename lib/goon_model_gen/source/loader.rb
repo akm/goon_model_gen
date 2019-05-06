@@ -58,6 +58,7 @@ module GoonModelGen
       # @return [Struct]
       def load_struct(f, name, t)
         f.new_struct(name).tap do |s|
+          s.ref_name = t['ref_name']
           t['fields'].each do |field_name, attrs|
             attrs = {'type' => attrs} unless attrs.is_a?(Hash)
             s.new_field(field_name, attrs)

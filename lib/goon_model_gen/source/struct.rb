@@ -7,7 +7,7 @@ module GoonModelGen
   module Source
     class Struct < Type
       attr_accessor :id_name, :id_type
-      attr_accessor :display_method
+      attr_accessor :ref_name
 
       def fields
         @fields ||= []
