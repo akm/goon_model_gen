@@ -1,6 +1,11 @@
 require "goon_model_gen"
 
 require "goon_model_gen/source/context"
+require "goon_model_gen/source/struct"
+require "goon_model_gen/source/enum"
+require "goon_model_gen/source/named_slice"
+
+
 require "goon_model_gen/golang/package"
 require "goon_model_gen/golang/packages"
 require "goon_model_gen/golang/datastore_supported"
@@ -20,32 +25,42 @@ module GoonModelGen
     # @return [Golang::Packages]
     def build(context)
       Golang::Packages.new.tap do |r|
+        build_methods = []
         context.files.each do |f|
           package_path = File.join(base_package_path, f.basename)
-          r << build_package(package_path, f.types)
+          pkg, procs = build_package(package_path, f.types)
+          r << pkg
+          build_methods.concat(procs)
         end
         r.resolve_type_names(Golang::DatastoreSupported.packages)
+        build_methods.each(&:call)
       end
     end
 
     # @param package_path [String]
     # @param types [Array<Source::Type>]
-    # @return [Golang::Package]
+    # @return [Golang::Package, Array<Proc>]
     def build_package(package_path, types)
-      Golang::Package.new(package_path).tap do |pkg|
+      procs = []
+      pkg = Golang::Package.new(package_path).tap do |pkg|
         types.each do |t|
           case t
           when Source::Struct then
             go_type = build_struct(t, pkg)
-            build_methods("model/struct", t, go_type)
+            template = (t.id_name && t.id_type) ? "model/goon" : "model/struct"
+            procs << Proc.new{ build_methods(template, t, go_type) }
           when Source::Enum then
             go_type = pkg.new_enum(t.name, t.base_type, t.map)
-            build_methods("model/enum", t, go_type)
+            procs << Proc.new{ build_methods("model/enum", t, go_type) }
+          when Source::NamedSlice then
+            go_type = pkg.new_named_slice(t.name, t.base_type_name)
+            procs << Proc.new{ build_methods("model/slice", t, go_type) }
           else
             raise "Unsupported type #{t.class.name} #{t.inspect}"
           end
         end
       end
+      return pkg, procs
     end
 
     # @param t [Source::Struct]
@@ -62,7 +77,7 @@ module GoonModelGen
           s.new_field(t.id_name, t.id_type, tags, goon_id: true)
         end
         t.fields.each do |f|
-          s.new_field(f.name, f.type_name, f.tags)
+          s.new_field(f.name, f.type_name, f.build_tags)
         end
       end
     end

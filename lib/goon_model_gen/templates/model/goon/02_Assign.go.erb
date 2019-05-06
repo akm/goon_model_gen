@@ -1,0 +1,17 @@
+
+<%-
+ref_type_name = "*Ref#{type.id_field.type.name.camelize}"
+ref_type = packages.type_for(ref_type_name)
+if ref_type
+  import ref_type.package
+-%>
+func (m *<%= type.name %>) Assign(r <%= ref_type.qualified_name %>) error {
+	r.ID = m.ID
+<%-   if type.display_method -%>
+	r.Name = m.<%= type.display_method %>()
+<%-   end -%>
+	return nil
+}
+<%-
+end
+-%>

@@ -21,6 +21,21 @@ module GoonModelGen
         @unique = attrs['unique']
         @tags = attrs['tags']
       end
+
+      def build_tags
+        r = {}
+        (tags || {}).each do |key, val|
+          r[key] = val.is_a?(Array) ? val.dup : [val]
+        end
+        r['json'] ||= [name.underscore]
+        if required
+          r['validate'] ||= []
+          r['validate'] << 'required'
+        else
+          r['json'] << 'omitempty'
+        end
+        return r
+      end
     end
   end
 end

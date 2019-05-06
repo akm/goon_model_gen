@@ -1,7 +1,0 @@
-func (m *<%= struct.name %>) Assign(ref *Ref<%= struct.id_type.camelize %>) error {
-	ref.ID = m.ID
-<%-   if struct.display_method -%>
-	ref.Name = m.<%= struct.display_method %>()
-<%-   end -%>
-	return nil
-}

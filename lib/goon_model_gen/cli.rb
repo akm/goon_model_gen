@@ -20,6 +20,11 @@ module GoonModelGen
     class_option :keep_editable, type: :boolean, aliases: 'k', default: true, desc: 'Keep user editable file'
     class_option :config, type: :string, aliases: 'c', default: '.goon_model_gen.yaml', desc: 'Path to config file. You can generate it by config subcommand'
 
+    desc "config", "Show config"
+    def config
+      puts YAML.dump(cfg)
+    end
+
     desc "source FILE1...", "Show source YAML object for debug"
     def sources(*paths)
       context = load_yamls(paths)
@@ -37,7 +42,7 @@ module GoonModelGen
       packages = build_model_objects(paths)
       packages.map(&:files).flatten.each do |f|
         path = File.join(Golang.gopath, 'src', f.package.path, f.name)
-        g = new_generator(f)
+        g = new_generator(f, packages)
         g.run(path)
       end
     end
@@ -61,8 +66,11 @@ module GoonModelGen
         b.build(context)
       end
 
-      def new_generator(f)
-        g = Generator.new(f, thor: self)
+      # @param f [Golang::File]
+      # @param packages [Golang::Packages]
+      # @return [Generator]
+      def new_generator(f, packages)
+        g = Generator.new(f, packages, thor: self)
         g.load_config(cfg)
         g.skip = options[:skip]
         g.force = options[:force]

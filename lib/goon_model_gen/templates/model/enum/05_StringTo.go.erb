@@ -4,6 +4,6 @@ func StringTo<%= type.name %>(s string) (<%= type.name %>, error) {
     return val, nil
   } else {
     err := &InvalidEnumName{Name: s}
-    return <%= type.name %><%= type.enum_map[type.enum_map.keys.first].camelize %>, err
+    return <%= type.name %>(0), err
   }
 }

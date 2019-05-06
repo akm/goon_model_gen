@@ -3,6 +3,7 @@ require "goon_model_gen"
 require "goon_model_gen/source/contextual"
 require "goon_model_gen/source/struct"
 require "goon_model_gen/source/enum"
+require "goon_model_gen/source/named_slice"
 
 module GoonModelGen
   module Source
@@ -39,6 +40,16 @@ module GoonModelGen
         Enum.new(name, base_type, map).tap do |t|
           t.context = self.context
           types.push(t)
+        end
+      end
+
+      # @param name [string]
+      # @param base_type_name [string]
+      # @return [Slice]
+      def new_named_slice(name, base_type_name)
+        NamedSlice.new(name, base_type_name).tap do |s|
+          s.context = self.context
+          types.push(s)
         end
       end
 

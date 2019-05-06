@@ -9,7 +9,7 @@ module GoonModelGen
 
       def gopath
         # Instead of $GOPATH
-        `go env GOPATH`
+        `go env GOPATH`.strip
       end
 
       # @return [Package]

@@ -5,9 +5,18 @@ require "goon_model_gen/golang/type"
 module GoonModelGen
   module Golang
     class Modifier < Type
-      attr_reader :prefix, :target
+      attr_reader :prefix, :target_name
+      attr_reader :target
       def initialize(prefix, target)
-        @prefix, @target = prefix, target
+        @prefix = prefix
+        case target
+        when Type
+          @target = target
+          @target_name = target.name
+        else
+          @target = nil
+          @target_name = target.to_s
+        end
       end
 
       def package
@@ -16,6 +25,12 @@ module GoonModelGen
 
       def qualified_name
         prefix + target.qualified_name
+      end
+
+      # @param pkgs [Packages]
+      def resolve(pkgs)
+        return if target
+        @target = pkgs.type_for(target_name) || raise("#{target_name.inspect} not found")
       end
 
       PATTERN = /\A\*|\A\[\d*\]/

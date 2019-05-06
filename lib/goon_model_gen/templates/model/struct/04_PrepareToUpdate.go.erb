@@ -1,8 +1,0 @@
-func (m *<%= struct.name %>) PrepareToUpdate() error {
-	m.PrepareFields()
-<%- if struct.fields.any?{|f| f.name == "UpdatedAt"} -%>
-<%-   import "time" -%>
-	m.UpdatedAt = time.Now()
-<%- end -%>
-	return nil
-}

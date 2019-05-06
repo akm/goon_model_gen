@@ -8,6 +8,7 @@ module GoonModelGen
       attr_reader :goon_id # true/false
       attr_reader :type
       attr_accessor :struct
+      attr_accessor :prepare_method
 
       def initialize(name, type_name, tags, goon_id: false)
         @name, @type_name = name, type_name
@@ -18,6 +19,19 @@ module GoonModelGen
       # @param pkgs [Packages]
       def resolve(pkgs)
         @type = pkgs.type_for(type_name) || raise("#{type_name.inspect} not found for #{struct.qualified_name}.#{name}")
+      end
+
+      def tags_string
+        tags.keys.sort.map do |key|
+          val = tags[key]
+          vals = val.is_a?(Array) ? val.join(',') : val.to_s
+          vals.empty? ? nil : "#{key}:\"#{vals}\""
+        end.compact.join(' ')
+      end
+
+      # @return [string]
+      def definition
+        "#{ name } #{ type.qualified_name } `#{ tags_string }`"
       end
     end
   end

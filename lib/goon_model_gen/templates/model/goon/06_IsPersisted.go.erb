@@ -1,0 +1,3 @@
+func (m *<%= type.name %>) IsPersisted() bool {
+	return m.ID != <%= type.id_field.type.qualified_name %>(0)
+}

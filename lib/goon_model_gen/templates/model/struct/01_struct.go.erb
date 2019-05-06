@@ -1,0 +1,6 @@
+type <%= type.name %> struct {
+<%- type.fields.each do |field| -%>
+<%-   import field.type.package -%>
+	<%= field.definition %>
+<%- end -%>
+}

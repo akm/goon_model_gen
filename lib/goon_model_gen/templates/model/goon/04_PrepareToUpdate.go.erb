@@ -1,0 +1,8 @@
+func (m *<%= type.name %>) PrepareToUpdate() error {
+	m.PrepareFields()
+<%- if type.fields.any?{|f| f.name == "UpdatedAt"} -%>
+<%-   import "time" -%>
+	m.UpdatedAt = time.Now()
+<%- end -%>
+	return nil
+}

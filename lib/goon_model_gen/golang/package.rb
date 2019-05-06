@@ -2,6 +2,7 @@ require "goon_model_gen"
 
 require "goon_model_gen/golang/struct"
 require "goon_model_gen/golang/enum"
+require "goon_model_gen/golang/named_slice"
 require "goon_model_gen/golang/file"
 
 module GoonModelGen
@@ -19,11 +20,11 @@ module GoonModelGen
       end
 
       def basename
-        path ? ::File.basename(path, '.*') : nil
+        @basename ||= path ? ::File.basename(path, '.*') : nil
       end
 
       def name
-        basename.gsub(/\-\_/, '').downcase
+        @name ||= basename ? basename.gsub(/[\-\_]/, '').downcase : nil
       end
 
       def add(type)
@@ -41,6 +42,13 @@ module GoonModelGen
       # @return [Enum]
       def new_enum(name, base_type, map)
         Enum.new(name, base_type, map).tap{|s| add(s) }
+      end
+
+      # @param name [string]
+      # @param base_type_name [String]
+      # @return [Slice]
+      def new_named_slice(name, base_type_name)
+        NamedSlice.new(name, "[]#{base_type_name}").tap{|s| add(s) }
       end
 
       # @param name [string]

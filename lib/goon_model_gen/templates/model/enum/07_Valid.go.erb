@@ -1,0 +1,4 @@
+func (t <%= type.name %>) Valid() bool {
+	_, ok := <%= type.name %>Map[t]
+	return ok
+}

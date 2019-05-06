@@ -43,6 +43,8 @@ module GoonModelGen
               end
             elsif t['enum_map'].is_a?(Hash) && t['base']
               f.new_enum(name, t['base'], t['enum_map'])
+            elsif t['slice_of'].is_a?(String)
+              f.new_named_slice(name, t['slice_of'])
             else
               raise "Unsupported type definition named '#{name}': #{t.inspect}"
             end

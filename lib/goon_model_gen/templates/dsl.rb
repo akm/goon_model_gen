@@ -1,5 +1,7 @@
 require "goon_model_gen"
 
+require "active_support/core_ext/string"
+
 module GoonModelGen
   module Templates
     module DSL
@@ -8,23 +10,25 @@ module GoonModelGen
       end
 
       def import(alias_or_package, package_or_nil = nil)
-        package = package_or_nil || alias_or_package
+        package_path = package_or_nil || alias_or_package
         new_alias = package_or_nil ? alias_or_package.to_s : nil
-        if dependencies.key?(package)
-          old_alias = dependencies[package]
+        package_path = package_path.path if package_path.respond_to?(:path)
+        return if package_path.blank?
+        if dependencies.key?(package_path)
+          old_alias = dependencies[package_path]
           raise "Conflict alias #{old_alias.inspect} and #{new_alias.inspect}" if old_alias != new_alias
         end
-        dependencies[package] ||= new_alias
+        dependencies[package_path] ||= new_alias
       end
 
       def partitioned_imports
-        import_content = partition(dependencies.keys).map do |group|
+        import_contents = partition(dependencies.keys).map do |group|
           group.map do |path|
             ailas_name = dependencies[path]
             ailas_name ? "\t#{ailas_name} \"#{path}\"" : "\t\"#{path}\""
           end.join("\n")
-        end.join("\n\n")
-        "import (\n%s\n)\n" % import_content
+        end
+        import_contents.empty? ? '' : "import (\n%s\n)\n" % import_contents.join("\n\n")
       end
 
       PARTITION_PATTERNS = [
