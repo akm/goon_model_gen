@@ -29,9 +29,12 @@ module GoonModelGen
         end.compact.join(' ')
       end
 
+      # @param pkg [Package]
       # @return [string]
-      def definition
-        "#{ name } #{ type.qualified_name } `#{ tags_string }`"
+      def definition_in(pkg)
+        type_exp =
+          (type.package.path == pkg.path) ? type.name : type.qualified_name
+        "#{ name } #{ type_exp } `#{ tags_string }`"
       end
     end
   end

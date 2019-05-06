@@ -23,6 +23,10 @@ module GoonModelGen
         target.package
       end
 
+      def name
+        prefix + target.name
+      end
+
       def qualified_name
         prefix + target.qualified_name
       end

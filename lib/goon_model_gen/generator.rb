@@ -63,7 +63,7 @@ module GoonModelGen
       r = [
         header_comments,
         "package %s" % file.package.name,
-        partitioned_imports,
+        partitioned_imports(except: [file.package.path]),
         texts.join("\n\n"),
       ].join("\n\n").strip << "\n"
 

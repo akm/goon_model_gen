@@ -21,8 +21,9 @@ module GoonModelGen
         dependencies[package_path] ||= new_alias
       end
 
-      def partitioned_imports
-        import_contents = partition(dependencies.keys).map do |group|
+      def partitioned_imports(except: [])
+        pkg_paths = dependencies.keys - except
+        import_contents = partition(pkg_paths).map do |group|
           group.map do |path|
             ailas_name = dependencies[path]
             ailas_name ? "\t#{ailas_name} \"#{path}\"" : "\t\"#{path}\""

@@ -1,9 +1,19 @@
+<%-
+err_type_name = "InvalidEnumName"
+err_type = packages.type_for(err_type_name)
+if err_type
+  import err_type.package
+-%>
+
 func StringTo<%= type.name %>(s string) (<%= type.name %>, error) {
   val, ok := <%= type.name %>NameToValue[s]
   if ok {
     return val, nil
   } else {
-    err := &InvalidEnumName{Name: s}
+    err := &<%= err_type.qualified_name %>{Name: s}
     return <%= type.name %>(0), err
   }
 }
+<%-
+end
+-%>
