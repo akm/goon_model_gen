@@ -1,8 +1,8 @@
 # GoonModelGen
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/goon_model_gen`. To experiment with that code, run `bin/console` for an interactive prompt.
+`goon_model_gen` is a generator of golang types with [goon](https://github.com/mjibson/goon).
+`goon_model_gen` generates model types and their store types.
 
-TODO: Delete this and the text above, and describe your gem
 
 ## Installation
 
@@ -22,7 +22,8 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+    $ goon_model_gen  -h
+
 
 ## Development
 
