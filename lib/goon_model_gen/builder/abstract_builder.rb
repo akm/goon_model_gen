@@ -46,12 +46,20 @@ module GoonModelGen
       # @param go_type [Golang::Type]
       def build_sentences(action, kind, t, go_type)
         template_base = File.join(action, kind)
+        build_sentences_with(template_base, go_type, t.generators[action])
+      end
+
+      # @param template_base [string] template directory path from templates directory. ex. model/enum, store/goon...
+      # @param generators [Hash<string,Object>]
+      # @param go_type [Golang::Type]
+      def build_sentences_with(template_base, go_type, generators)
         m2t = method_to_template_for(template_base)
-        t.generators ||= default_generators_for(template_base)
-        t.generators.each do |name, suffix|
+        generators ||= default_generators_for(template_base)
+        generators.each do |name, suffix|
           next if !suffix
           template = m2t[name]
-          parts = [t.name.underscore]
+          raise "No template found for #{name.inspect}" unless template
+          parts = [go_type.name.underscore]
           custom_suffix = false
           if suffix.is_a?(String)
             parts << suffix
