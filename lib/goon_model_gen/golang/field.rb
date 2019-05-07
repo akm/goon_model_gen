@@ -9,6 +9,7 @@ module GoonModelGen
       attr_reader :type
       attr_accessor :struct
       attr_accessor :prepare_method
+      attr_accessor :unique
 
       def initialize(name, type_name, tags, goon_id: false)
         @name, @type_name = name, type_name

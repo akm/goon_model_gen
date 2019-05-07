@@ -62,7 +62,9 @@ module GoonModelGen
             s.new_field(t.id_name, t.id_type, tags, goon_id: true)
           end
           t.fields.each do |f|
-            s.new_field(f.name, f.type_name, f.build_tags)
+            s.new_field(f.name, f.type_name, f.build_tags).tap do |field|
+              field.unique = f.unique
+            end
           end
         end
       end
