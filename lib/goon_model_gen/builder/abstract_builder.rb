@@ -7,6 +7,7 @@ module GoonModelGen
     class AbstractBuilder
       attr_reader :base_package_path
 
+      # @param base_package_path [String]
       def initialize(base_package_path)
         @base_package_path = base_package_path
       end
@@ -39,10 +40,12 @@ module GoonModelGen
         raise NotImplementedError, "#{self.type.name} doesn't implement resolve_type_names method"
       end
 
-      # @param template_base [string]
+      # @param action [string] directory name under templates directory. ex. model, store...
+      # @param kind [string] directory name under the directory specified by action. ex. goon, struct, enum, slice
       # @param t [Source::Struct]
       # @param go_type [Golang::Type]
-      def build_sentences(template_base, t, go_type)
+      def build_sentences(action, kind, t, go_type)
+        template_base = File.join(action, kind)
         m2t = method_to_template_for(template_base)
         t.generators ||= default_generators_for(template_base)
         t.generators.each do |name, suffix|
