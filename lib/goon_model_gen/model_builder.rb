@@ -25,15 +25,15 @@ module GoonModelGen
     # @return [Golang::Packages]
     def build(context)
       Golang::Packages.new.tap do |r|
-        build_methods = []
+        build_sentences = []
         context.files.each do |f|
           package_path = File.join(base_package_path, f.basename)
           pkg, procs = build_package(package_path, f.types)
           r << pkg
-          build_methods.concat(procs)
+          build_sentences.concat(procs)
         end
         r.resolve_type_names(Golang::DatastoreSupported.packages)
-        build_methods.each(&:call)
+        build_sentences.each(&:call)
       end
     end
 
@@ -48,13 +48,13 @@ module GoonModelGen
           when Source::Struct then
             go_type = build_struct(t, pkg)
             template = (t.id_name && t.id_type) ? "model/goon" : "model/struct"
-            procs << Proc.new{ build_methods(template, t, go_type) }
+            procs << Proc.new{ build_sentences(template, t, go_type) }
           when Source::Enum then
             go_type = pkg.new_enum(t.name, t.base_type, t.map)
-            procs << Proc.new{ build_methods("model/enum", t, go_type) }
+            procs << Proc.new{ build_sentences("model/enum", t, go_type) }
           when Source::NamedSlice then
             go_type = pkg.new_named_slice(t.name, t.base_type_name)
-            procs << Proc.new{ build_methods("model/slice", t, go_type) }
+            procs << Proc.new{ build_sentences("model/slice", t, go_type) }
           else
             raise "Unsupported type #{t.class.name} #{t.inspect}"
           end
@@ -87,7 +87,7 @@ module GoonModelGen
     # @param template_base [string]
     # @param t [Source::Struct]
     # @param go_type [Golang::Type]
-    def build_methods(template_base, t, go_type)
+    def build_sentences(template_base, t, go_type)
       m2t = method_to_template_for(template_base)
       t.methods ||= default_methods_for(template_base)
       t.methods.each do |name, suffix|
