@@ -48,7 +48,7 @@ module GoonModelGen
             else
               raise "Unsupported type definition named '#{name}': #{t.inspect}"
             end
-          source_type.methods = t['methods']
+          source_type.generators = t['generates']
         end
       end
 

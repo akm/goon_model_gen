@@ -9,7 +9,7 @@ module GoonModelGen
 
       attr_reader :name
       attr_accessor :package
-      attr_accessor :methods # key: method_name, value: true|false|string(file_suffix)
+      attr_accessor :generators # key: method_name, value: true|false|string(file_suffix)
 
       # @param name [string]
       def initialize(name)

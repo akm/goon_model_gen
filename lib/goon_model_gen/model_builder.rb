@@ -89,8 +89,8 @@ module GoonModelGen
     # @param go_type [Golang::Type]
     def build_sentences(template_base, t, go_type)
       m2t = method_to_template_for(template_base)
-      t.methods ||= default_methods_for(template_base)
-      t.methods.each do |name, suffix|
+      t.generators ||= default_generators_for(template_base)
+      t.generators.each do |name, suffix|
         next if !suffix
         template = m2t[name]
         parts = [t.name.underscore]
@@ -107,7 +107,7 @@ module GoonModelGen
       end
     end
 
-    def default_methods_for(template_base)
+    def default_generators_for(template_base)
       method_to_template_for(template_base).keys.
         each_with_object({}){|name, d| d[name] = true }
     end
