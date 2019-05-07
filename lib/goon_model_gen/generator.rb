@@ -1,6 +1,7 @@
 require "goon_model_gen"
 
 require "goon_model_gen/templates/dsl"
+require "goon_model_gen/golang"
 
 module GoonModelGen
   class Generator
@@ -31,8 +32,8 @@ module GoonModelGen
       clear: "\e[0m",
     }
 
-    def run(output_path, variables = {})
-      content = execute(variables)
+    def run(variables = {})
+      output_path = File.join(Golang.gopath, 'src', file.package.path, file.name)
 
       if user_editable? && File.exist?(output_path) && keep_editable
         $stderr.puts("%sKEEP%s %s" % [COLORS[:blue], COLORS[:clear], output_path])

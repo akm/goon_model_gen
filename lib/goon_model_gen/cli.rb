@@ -5,7 +5,6 @@ require "yaml"
 require "thor"
 
 require "goon_model_gen/config"
-require "goon_model_gen/golang"
 require "goon_model_gen/model_builder"
 require "goon_model_gen/source/loader"
 require "goon_model_gen/generator"
@@ -41,9 +40,7 @@ module GoonModelGen
     def model(*paths)
       packages = build_model_objects(paths)
       packages.map(&:files).flatten.each do |f|
-        path = File.join(Golang.gopath, 'src', f.package.path, f.name)
-        g = new_generator(f, packages)
-        g.run(path)
+        new_generator(f, packages).run
       end
     end
 
