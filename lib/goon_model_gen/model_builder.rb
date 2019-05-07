@@ -94,10 +94,16 @@ module GoonModelGen
         next if !suffix
         template = m2t[name]
         parts = [t.name.underscore]
-        parts << suffix if suffix.is_a?(String)
+        custom_suffix = false
+        if suffix.is_a?(String)
+          parts << suffix
+          custom_suffix = true
+        end
         filename = parts.join('_') << '.go'
-        file = go_type.package.find_or_new_file(filename)
-        file.new_sentence(File.join(template_base, template), go_type)
+        go_type.package.find_or_new_file(filename).tap do |file|
+          file.custom_suffix = custom_suffix
+          file.new_sentence(File.join(template_base, template), go_type)
+        end
       end
     end
 

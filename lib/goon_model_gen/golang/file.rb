@@ -7,6 +7,7 @@ module GoonModelGen
     class File
       attr_reader :package, :name
       attr_reader :sentences
+      attr_accessor :custom_suffix # false/true
 
       # @param package [Package]
       # @param name [string]
