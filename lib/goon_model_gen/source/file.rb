@@ -28,6 +28,7 @@ module GoonModelGen
       def new_struct(name)
         Struct.new(name).tap do |s|
           s.context = self.context
+          s.file = self
           types.push(s)
         end
       end
