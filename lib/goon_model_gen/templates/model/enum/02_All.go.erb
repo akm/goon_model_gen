@@ -1,0 +1,5 @@
+var All<%= type.name %> = []<%= type.name %>{
+<%-   type.map.each do |key, name| -%>
+  <%= name.camelize %>,
+<%-   end -%>
+}
