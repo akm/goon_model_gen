@@ -1,0 +1,20 @@
+<%-
+import 'context'
+import model.package
+-%>
+
+func (s *<%= type.name %>) ByID(ctx context.Context, iD int64) (*<%= model.qualified_name %>, error) {
+	r := <%= model.qualified_name %>{ID: iD}
+	err := s.Get(ctx, &r)
+	if err != nil {
+		return nil, err
+	}
+
+	if s.Hook != nil {
+		if err := s.Hook.AfterGet(ctx, &r); err != nil {
+			return nil, err
+		}
+	}
+
+	return &r, nil
+}

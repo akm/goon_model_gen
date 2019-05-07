@@ -60,6 +60,9 @@ module GoonModelGen
         # local variables used in tempaltes
         type = sentence.type
         package = type.package
+        type.memo.each do |key, val|
+          define_singleton_method(key){ val }
+        end
 
         erb = ERB.new(File.read(template_path), nil, "-")
         erb.filename = template_path

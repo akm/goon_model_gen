@@ -1,0 +1,24 @@
+<%-
+import 'context'
+import model.package
+import 'google.golang.org/appengine/datastore'
+import 'google.golang.org/appengine/log'
+-%>
+
+func (s *<%= type.name %>) AllBy(ctx context.Context, q *datastore.Query) ([]*<%= model.qualified_name %>, error) {
+	g := goon.FromContext(ctx)
+	r := []*<%= model.qualified_name %>{}
+	_, err := g.GetAll(q.EventualConsistency(), &r)
+	if err != nil {
+		log.Errorf(ctx, "Failed to AllBy <%= model.qualified_name %> because of %v\n", err)
+		return nil, err
+	}
+
+	if s.Hook != nil {
+		if err := s.Hook.AfterQuery(ctx, &r); err != nil {
+			return nil, err
+		}
+	}
+
+	return r, nil
+}

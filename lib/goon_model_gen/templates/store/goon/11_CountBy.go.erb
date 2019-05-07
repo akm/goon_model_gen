@@ -1,0 +1,16 @@
+<%-
+import 'context'
+import 'google.golang.org/appengine/datastore'
+import 'google.golang.org/appengine/log'
+import 'github.com/mjibson/goon'
+-%>
+
+func (s *<%= type.name %>) CountBy(ctx context.Context, q *datastore.Query) (int, error) {
+	g := goon.FromContext(ctx)
+	c, err := g.Count(q)
+	if err != nil {
+		log.Errorf(ctx, "Failed to count <%= model.qualified_name %> with %v because of %v\n", q, err)
+		return 0, err
+	}
+	return c, nil
+}

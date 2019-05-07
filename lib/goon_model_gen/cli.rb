@@ -6,6 +6,8 @@ require "thor"
 
 require "goon_model_gen/config"
 require "goon_model_gen/builder/model_builder"
+require "goon_model_gen/builder/store_builder"
+require "goon_model_gen/builder/validation_builder"
 require "goon_model_gen/source/loader"
 require "goon_model_gen/generator"
 
@@ -46,7 +48,7 @@ module GoonModelGen
     desc "store FILE1...", "Generate store files from source YAML files"
     option :inspect, type: :boolean, desc: "Don't generate any file and show package objects if given"
     def store(*paths)
-      packages = build_store_objects(paths)
+      packages = build_store_packages(paths).add(*validation_packages)
       if options[:inspect]
         puts YAML.dump(packages)
       else
@@ -76,10 +78,11 @@ module GoonModelGen
 
       # @param paths [Array<String>] Source::Context
       # @return [Array<Golang::Package>]
-      def build_store_objects(paths)
+      def build_store_packages(paths)
         context = Source::Loader.new.process(paths)
         model_packages = Builder::ModelBuilder.new(cfg.model_package_path).build(context)
-
+        store_packages = Builder::StoreBuilder.new(cfg.store_package_path, model_packages).build(context)
+        return store_packages
       end
 
       # @param f [Golang::File]
@@ -92,6 +95,11 @@ module GoonModelGen
         g.force = options[:force]
         g.overwrite_custom_file = options[:overwrite_custom_file]
         return g
+      end
+
+      # @return [Golang::Package]
+      def validation_packages
+        Builder::ValidationBuilder.new(cfg.validation_package_path).build
       end
     end
   end

@@ -1,0 +1,15 @@
+<%-
+import 'context'
+import model.package
+import 'google.golang.org/appengine/datastore'
+import 'google.golang.org/appengine/log'
+-%>
+
+func (s *<%= type.name %>) ByKey(ctx context.Context, key *datastore.Key) (*<%= model.qualified_name %>, error) {
+	if err := s.IsValidKey(ctx, key); err != nil {
+		log.Errorf(ctx, "<%= type.name %>.ByKey got Invalid key: %v because of %v\n", key, err)
+		return nil, err
+	}
+
+	return s.ByID(ctx, key.IntID())
+}

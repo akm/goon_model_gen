@@ -1,0 +1,24 @@
+<%-
+import 'context'
+import 'fmt'
+import model.package
+import 'google.golang.org/appengine/datastore'
+import 'google.golang.org/appengine/log'
+-%>
+
+func (s *<%= type.name %>) Create(ctx context.Context, m *<%= model.qualified_name %>) (*datastore.Key, error) {
+	if err := m.PrepareToCreate(); err != nil {
+		return nil, err
+	}
+	return s.PutWith(ctx, m, func() error {
+		exist, err := s.Exist(ctx, m)
+		if err != nil {
+			return err
+		}
+		if exist {
+			log.Errorf(ctx, "Failed to create %v because of another entity has same key\n", m)
+			return fmt.Errorf("Duplicate ID error: %q of %v\n", m.ID, m)
+		}
+		return nil
+	})
+}

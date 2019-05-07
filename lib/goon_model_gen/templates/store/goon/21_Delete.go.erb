@@ -1,0 +1,20 @@
+<%-
+import 'context'
+import model.package
+import 'google.golang.org/appengine/log'
+import 'github.com/mjibson/goon'
+-%>
+
+func (s *<%= type.name %>) Delete(ctx context.Context, m *<%= model.qualified_name %>) error {
+	g := goon.FromContext(ctx)
+	key, err := g.KeyError(m)
+	if err != nil {
+		log.Errorf(ctx, "Failed to Get key of %v because of %v\n", m, err)
+		return err
+	}
+	if err := g.Delete(key); err != nil {
+		log.Errorf(ctx, "Failed to Delete %v because of %v\n", m, err)
+		return err
+	}
+	return nil
+}
