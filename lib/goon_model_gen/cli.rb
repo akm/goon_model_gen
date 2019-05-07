@@ -16,7 +16,7 @@ module GoonModelGen
     class_option :version, type: :boolean, aliases: 'v', desc: 'Show version before processing'
     class_option :skip, type: :boolean, aliases: 's', desc: "Skip generate file"
     class_option :force, type: :boolean, aliases: 'f', desc: 'Force overwrite files'
-    class_option :keep_editable, type: :boolean, aliases: 'k', default: true, desc: 'Keep user editable file'
+    class_option :overwrite_custom_file, type: :boolean, aliases: 'o', desc: 'Overwrite custom files if given'
     class_option :config, type: :string, aliases: 'c', default: '.goon_model_gen.yaml', desc: 'Path to config file. You can generate it by config subcommand'
 
     desc "config", "Show config"
@@ -71,7 +71,7 @@ module GoonModelGen
         g.load_config(cfg)
         g.skip = options[:skip]
         g.force = options[:force]
-        g.keep_editable = options[:keep_editable]
+        g.overwrite_custom_file = options[:overwrite_custom_file]
         return g
       end
     end

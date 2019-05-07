@@ -14,7 +14,7 @@ module GoonModelGen
     attr_accessor :gofmt_disabled  # false/true
     attr_accessor :version_comment # false/true
     attr_accessor :force, :skip    # false/true
-    attr_accessor :keep_editable   # false/true
+    attr_accessor :overwrite_custom_file   # false/true
 
     DEFAULT_TEMPLATES_DIR = File.expand_path('../templates', __FILE__)
 
@@ -35,10 +35,12 @@ module GoonModelGen
     def run(variables = {})
       output_path = File.join(Golang.gopath, 'src', file.package.path, file.name)
 
-      if user_editable? && File.exist?(output_path) && keep_editable
+      if file.custom_suffix && File.exist?(output_path) && !overwrite_custom_file
         $stderr.puts("%sKEEP%s %s" % [COLORS[:blue], COLORS[:clear], output_path])
         return
       end
+
+      content = execute(variables)
 
       options = {skip: skip, force: force}
       thor.create_file(output_path, content, options)
