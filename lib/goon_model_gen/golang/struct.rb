@@ -12,8 +12,8 @@ module GoonModelGen
         @fields ||= []
       end
 
-      # @param name [string]
-      # @param t [Type]
+      # @param name [String]
+      # @param t [String]
       # @param tags [Hash<String,Array<String>>]
       def new_field(name, t, tags, options = {})
         Field.new(name, t, tags, options).tap do |f|
