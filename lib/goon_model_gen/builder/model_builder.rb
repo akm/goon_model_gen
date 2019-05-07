@@ -13,6 +13,7 @@ require "goon_model_gen/golang/datastore_supported"
 require "active_support/core_ext/string"
 
 module GoonModelGen
+  module Builder
   class ModelBuilder
     attr_reader :base_package_path
 
@@ -127,11 +128,12 @@ module GoonModelGen
     end
 
     def templates_for(template_base)
-      base_dir = File.join(File.expand_path('../templates', __FILE__), template_base)
+      base_dir = File.join(File.expand_path('../../templates', __FILE__), template_base)
       Dir.chdir(base_dir) do
         Dir.glob('*.go.erb')
       end
     end
 
+  end
   end
 end

@@ -5,7 +5,7 @@ require "yaml"
 require "thor"
 
 require "goon_model_gen/config"
-require "goon_model_gen/model_builder"
+require "goon_model_gen/builder/model_builder"
 require "goon_model_gen/source/loader"
 require "goon_model_gen/generator"
 
@@ -43,6 +43,19 @@ module GoonModelGen
       end
     end
 
+    desc "store FILE1...", "Generate store files from source YAML files"
+    option :inspect, type: :boolean, desc: "Don't generate any file and show package objects if given"
+    def store(*paths)
+      packages = build_store_objects(paths)
+      if options[:inspect]
+        puts YAML.dump(packages)
+      else
+        packages.map(&:files).flatten.each do |f|
+          new_generator(f, packages).run
+        end
+      end
+    end
+
     no_commands do
       def cfg
         @cfg ||= Config.new.load_from(options[:config])
@@ -58,8 +71,15 @@ module GoonModelGen
       # @return [Array<Golang::Package>]
       def build_model_objects(paths)
         context = Source::Loader.new.process(paths)
-        b = ModelBuilder.new(cfg.model_package_path)
-        b.build(context)
+        Builder::ModelBuilder.new(cfg.model_package_path).build(context)
+      end
+
+      # @param paths [Array<String>] Source::Context
+      # @return [Array<Golang::Package>]
+      def build_store_objects(paths)
+        context = Source::Loader.new.process(paths)
+        model_packages = Builder::ModelBuilder.new(cfg.model_package_path).build(context)
+
       end
 
       # @param f [Golang::File]
