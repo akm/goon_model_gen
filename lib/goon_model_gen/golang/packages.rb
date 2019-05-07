@@ -1,5 +1,6 @@
 require "goon_model_gen"
 
+require "goon_model_gen/golang/package"
 require "goon_model_gen/golang/modifier"
 
 require "active_support/core_ext/string"
@@ -23,6 +24,10 @@ module GoonModelGen
           self << i
         end
         self
+      end
+
+      def new_package(path)
+        Package.new(path).tap{|pkg| add(pkg)}
       end
 
       def detect_by(basename)
