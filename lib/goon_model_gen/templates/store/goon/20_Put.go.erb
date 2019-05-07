@@ -1,0 +1,17 @@
+<%-
+import 'context'
+import model.package
+import 'google.golang.org/appengine/datastore'
+import 'google.golang.org/appengine/log'
+import 'github.com/mjibson/goon'
+-%>
+
+func (s *<%= type.name %>) Put(ctx context.Context, m *<%= model.qualified_name %>) (*datastore.Key, error) {
+	g := goon.FromContext(ctx)
+	key, err := g.Put(m)
+	if err != nil {
+		log.Errorf(ctx, "Failed to Put %v because of %v\n", m, err)
+		return nil, err
+	}
+	return key, nil
+}

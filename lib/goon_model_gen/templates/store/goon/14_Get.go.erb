@@ -1,0 +1,22 @@
+<%-
+import 'context'
+import model.package
+import 'google.golang.org/appengine/datastore'
+import 'google.golang.org/appengine/log'
+import 'github.com/mjibson/goon'
+-%>
+
+func (s *<%= type.name %>) Get(ctx context.Context, m *<%= model.qualified_name %>) error {
+	g := goon.FromContext(ctx)
+	err := g.Get(m)
+	if err != nil {
+		log.Errorf(ctx, "Failed to Get <%= model.qualified_name %> because of %v\n", err)
+		return err
+	}
+
+	if s.Binder != nil && !s.Binder.Visible(m) {
+		return datastore.ErrNoSuchEntity
+	}
+
+	return nil
+}

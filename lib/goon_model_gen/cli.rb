@@ -5,7 +5,9 @@ require "yaml"
 require "thor"
 
 require "goon_model_gen/config"
-require "goon_model_gen/model_builder"
+require "goon_model_gen/builder/model_builder"
+require "goon_model_gen/builder/store_builder"
+require "goon_model_gen/builder/validation_builder"
 require "goon_model_gen/source/loader"
 require "goon_model_gen/generator"
 
@@ -30,17 +32,29 @@ module GoonModelGen
       puts YAML.dump(context)
     end
 
-    desc "build FILE1...", "Build golang objects from source YAML files"
-    def build(*paths)
-      packages = build_model_objects(paths)
-      puts YAML.dump(packages)
-    end
-
     desc "model FILE1...", "Generate model files from source YAML files"
+    option :inspect, type: :boolean, desc: "Don't generate any file and show package objects if given"
     def model(*paths)
       packages = build_model_objects(paths)
-      packages.map(&:files).flatten.each do |f|
-        new_generator(f, packages).run
+      if options[:inspect]
+        puts YAML.dump(packages)
+      else
+        packages.map(&:files).flatten.each do |f|
+          new_generator(f, packages).run
+        end
+      end
+    end
+
+    desc "store FILE1...", "Generate store files from source YAML files"
+    option :inspect, type: :boolean, desc: "Don't generate any file and show package objects if given"
+    def store(*paths)
+      packages = build_store_packages(paths).add(*validation_packages)
+      if options[:inspect]
+        puts YAML.dump(packages)
+      else
+        packages.map(&:files).flatten.each do |f|
+          new_generator(f, packages).run
+        end
       end
     end
 
@@ -59,8 +73,16 @@ module GoonModelGen
       # @return [Array<Golang::Package>]
       def build_model_objects(paths)
         context = Source::Loader.new.process(paths)
-        b = ModelBuilder.new(cfg.model_package_path)
-        b.build(context)
+        Builder::ModelBuilder.new(cfg.model_package_path).build(context)
+      end
+
+      # @param paths [Array<String>] Source::Context
+      # @return [Array<Golang::Package>]
+      def build_store_packages(paths)
+        context = Source::Loader.new.process(paths)
+        model_packages = Builder::ModelBuilder.new(cfg.model_package_path).build(context)
+        store_packages = Builder::StoreBuilder.new(cfg.store_package_path, model_packages).build(context)
+        return store_packages
       end
 
       # @param f [Golang::File]
@@ -73,6 +95,11 @@ module GoonModelGen
         g.force = options[:force]
         g.overwrite_custom_file = options[:overwrite_custom_file]
         return g
+      end
+
+      # @return [Golang::Package]
+      def validation_packages
+        Builder::ValidationBuilder.new(cfg.validation_package_path).build
       end
     end
   end

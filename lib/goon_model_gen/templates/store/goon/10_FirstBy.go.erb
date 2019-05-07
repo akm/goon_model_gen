@@ -1,0 +1,17 @@
+<%-
+import 'context'
+import model.package
+import 'google.golang.org/appengine/datastore'
+-%>
+
+func (s *<%= type.name %>) FirstBy(ctx context.Context, q *datastore.Query) (*<%= model.qualified_name %>, error) {
+	r, err := s.AllBy(ctx, q.Limit(1))
+	if err != nil {
+		return nil, err
+	}
+	if len(r) > 0 {
+		return r[0], nil
+	} else {
+		return nil, nil
+	}
+}

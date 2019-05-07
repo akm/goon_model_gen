@@ -1,0 +1,11 @@
+<%-
+import 'google.golang.org/appengine/datastore'
+-%>
+
+func (s *<%= type.name %>) Query() *datastore.Query {
+	q := datastore.NewQuery(s.KindName())
+	if s.Binder != nil {
+		q = s.Binder.Query(q)
+	}
+	return q
+}

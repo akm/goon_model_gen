@@ -1,0 +1,10 @@
+<%-
+import 'context'
+import model.package
+-%>
+
+type <%= type.name %>Hook interface {
+	AfterQuery(ctx context.Context, m *[]*<%= model.qualified_name %>) error
+	AfterGet(ctx context.Context, m *<%= model.qualified_name %>) error
+	BeforeValidation(ctx context.Context, m *<%= model.qualified_name %>) error
+}

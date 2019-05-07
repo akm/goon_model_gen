@@ -1,0 +1,4 @@
+<%- import 'fmt' -%>
+func (err *<%= type.name %>) Error() string {
+	return fmt.Sprintf("Invalid %s: %s", err.Field, err.Message)
+}

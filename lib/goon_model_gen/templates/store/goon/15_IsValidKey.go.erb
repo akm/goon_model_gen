@@ -1,0 +1,20 @@
+<%-
+import 'context'
+import 'fmt'
+import model.package
+import 'google.golang.org/appengine/datastore'
+import 'google.golang.org/appengine/log'
+import 'github.com/mjibson/goon'
+-%>
+
+func (s *<%= type.name %>) IsValidKey(ctx context.Context, key *datastore.Key) error {
+	if key == nil {
+		return fmt.Errorf("key is nil")
+	}
+	g := goon.FromContext(ctx)
+	expected := g.Kind(&<%= model.qualified_name %>{})
+	if key.Kind() != expected {
+		return fmt.Errorf("key kind must be %s but was %s", expected, key.Kind())
+	}
+	return nil
+}

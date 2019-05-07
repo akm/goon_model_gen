@@ -29,8 +29,7 @@ module GoonModelGen
         end
         r['json'] ||= [name.underscore]
         if required
-          r['validate'] ||= []
-          r['validate'] << 'required'
+          r['validate'] = ['required'] + (r['validate'] || [])
         else
           r['json'] << 'omitempty'
         end

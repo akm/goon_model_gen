@@ -1,0 +1,10 @@
+<%-
+import 'google.golang.org/appengine/datastore'
+import model.package
+-%>
+
+type <%= type.name %>Binder interface {
+	Query(q *datastore.Query) *datastore.Query
+	Visible(m *<%= model.qualified_name %>) bool
+	Prepare(m *<%= model.qualified_name %>)
+}

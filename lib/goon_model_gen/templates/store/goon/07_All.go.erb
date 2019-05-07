@@ -1,0 +1,8 @@
+<%-
+import 'context'
+import model.package
+-%>
+
+func (s *<%= type.name %>) All(ctx context.Context) ([]*<%= model.qualified_name %>, error) {
+	return s.AllBy(ctx, s.Query())
+}

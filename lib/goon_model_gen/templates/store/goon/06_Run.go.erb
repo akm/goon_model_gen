@@ -1,0 +1,10 @@
+<%-
+import 'context'
+import 'google.golang.org/appengine/datastore'
+import 'github.com/mjibson/goon'
+-%>
+
+func (s *<%= type.name %>) Run(ctx context.Context, q *datastore.Query) *goon.Iterator {
+	g := goon.FromContext(ctx)
+	return g.Run(q)
+}

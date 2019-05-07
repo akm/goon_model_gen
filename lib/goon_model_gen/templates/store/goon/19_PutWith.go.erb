@@ -1,0 +1,28 @@
+<%-
+import 'context'
+import model.package
+import 'google.golang.org/appengine/datastore'
+-%>
+
+func (s *<%= type.name %>) PutWith(ctx context.Context, m *<%= model.qualified_name %>, f func() error) (*datastore.Key, error) {
+	if s.Binder != nil {
+		s.Binder.Prepare(m)
+	}
+
+	if s.Hook != nil {
+		if err := s.Hook.BeforeValidation(ctx, m); err != nil {
+			return nil, err
+		}
+	}
+
+	if err := s.Validate(ctx, m); err != nil {
+		return nil, err
+	}
+	if f != nil {
+		if err := f(); err != nil {
+			return nil, err
+		}
+	}
+
+	return s.Put(ctx, m)
+}

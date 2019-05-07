@@ -41,12 +41,15 @@ module GoonModelGen
       end
 
       content = execute(variables)
+      return unless content
 
       options = {skip: skip, force: force}
       thor.create_file(output_path, content, options)
     end
 
     def execute(variables = {})
+      return nil if file.sentences.empty?
+
       variables.each do |key, val|
         define_singleton_method(key){ val }
       end
@@ -57,6 +60,9 @@ module GoonModelGen
         # local variables used in tempaltes
         type = sentence.type
         package = type.package
+        type.memo.each do |key, val|
+          define_singleton_method(key){ val }
+        end
 
         erb = ERB.new(File.read(template_path), nil, "-")
         erb.filename = template_path

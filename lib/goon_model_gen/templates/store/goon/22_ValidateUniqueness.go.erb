@@ -1,0 +1,35 @@
+<%-
+import 'context'
+import 'fmt'
+import model.package
+
+validation_error = packages.type_for('ValidationError')
+raise "ValidationError not found" unless validation_error
+import validation_error.package
+-%>
+
+func (s *<%= type.name %>) ValidateUniqueness(ctx context.Context, m *<%= model.qualified_name %>) error {
+	conditions := map[string]interface{}{
+<%- model.fields.select(&:unique).each do |field| -%>
+		"<%= field.name %>": m.<%= field.name %>,
+<%- end -%>
+  }
+	for field, value := range conditions {
+		q := s.Query().Filter(field+" =", value)
+		c, err := s.CountBy(ctx, q)
+		if err != nil {
+			return err
+		}
+		b := 0
+		if m.IsPersisted() {
+			b = 1
+		}
+		if c > b {
+			return &<%= validation_error.qualified_name %>{
+				Field:   field,
+				Message: fmt.Sprintf("%v has already been taken", value),
+			}
+		}
+	}
+	return nil
+}

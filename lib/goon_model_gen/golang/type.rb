@@ -24,6 +24,11 @@ module GoonModelGen
           name
         end
       end
+
+      def memo
+        @memo ||= {}
+      end
+
     end
   end
 end
