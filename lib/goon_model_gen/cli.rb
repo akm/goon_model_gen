@@ -30,17 +30,16 @@ module GoonModelGen
       puts YAML.dump(context)
     end
 
-    desc "build FILE1...", "Build golang objects from source YAML files"
-    def build(*paths)
-      packages = build_model_objects(paths)
-      puts YAML.dump(packages)
-    end
-
     desc "model FILE1...", "Generate model files from source YAML files"
+    option :inspect, type: :boolean, desc: "Don't generate any file and show package objects if given"
     def model(*paths)
       packages = build_model_objects(paths)
-      packages.map(&:files).flatten.each do |f|
-        new_generator(f, packages).run
+      if options[:inspect]
+        puts YAML.dump(packages)
+      else
+        packages.map(&:files).flatten.each do |f|
+          new_generator(f, packages).run
+        end
       end
     end
 
