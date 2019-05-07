@@ -48,7 +48,15 @@ module GoonModelGen
             else
               raise "Unsupported type definition named '#{name}': #{t.inspect}"
             end
-          source_type.generators = t['generates']
+
+          source_type.generators =
+            case t['generates']
+            when false then {}
+            when true then nil # Fulfill by default methods
+            when Hash then t['generates']
+            when Array then t['generates'].each_with_object({}){|i,d| d[i] = true}
+            else nil
+            end
         end
       end
 
