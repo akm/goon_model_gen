@@ -6,6 +6,7 @@ module GoonModelGen
   module Builder
     class AbstractBuilder
       attr_reader :base_package_path
+      attr_accessor :package_suffix
 
       # @param base_package_path [String]
       def initialize(base_package_path)
@@ -18,7 +19,7 @@ module GoonModelGen
         Golang::Packages.new.tap do |r|
           build_sentences = []
           context.files.each do |f|
-            package_path = File.join(base_package_path, f.basename)
+            package_path = File.join(base_package_path, f.basename + (package_suffix || ""))
             pkg, procs = build_package(package_path, f.types)
             r << pkg
             build_sentences.concat(procs)
