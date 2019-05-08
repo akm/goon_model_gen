@@ -17,6 +17,7 @@ module GoonModelGen
       # @param model_packages [Golang::Packages]
       def initialize(base_package_path, model_packages)
         super(base_package_path)
+        @package_suffix = "_store"
         @model_packages = model_packages
       end
 
