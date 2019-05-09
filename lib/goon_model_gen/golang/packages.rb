@@ -20,8 +20,12 @@ module GoonModelGen
       end
 
       def add(*packages)
-        packages.each do |i|
-          self << i
+        packages.flatten.each do |i|
+          if pkg = find_by_path(i.path)
+            pkg.merge!(i)
+          else
+            self << i
+          end
         end
         self
       end

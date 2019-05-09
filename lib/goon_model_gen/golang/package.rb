@@ -27,6 +27,18 @@ module GoonModelGen
         @name ||= basename ? basename.gsub(/[\-\_]/, '').downcase : nil
       end
 
+      def merge!(other)
+        other.types.each{|t| add(t) unless types.any?{|oldt| oldt.name == t.name }  }
+        other.files.each{|f| add_file(f)  unless files.any?{|oldf| oldf.name == f.name } }
+      end
+
+      # @param file [File]
+      def add_file(file)
+        files.push(file)
+        file.package = self
+      end
+
+      # @param type [Type]
       def add(type)
         types.push(type)
         type.package = self
@@ -61,8 +73,8 @@ module GoonModelGen
       # @param name [string]
       # @return [File]
       def new_file(name)
-        File.new(self, name).tap do |f|
-          files.push(f)
+        File.new(name).tap do |f|
+          add_file(f)
         end
       end
 

@@ -5,14 +5,13 @@ require "goon_model_gen/golang/sentence"
 module GoonModelGen
   module Golang
     class File
-      attr_reader :package, :name
+      attr_reader :name
       attr_reader :sentences
+      attr_accessor :package
       attr_accessor :custom_suffix # false/true
 
-      # @param package [Package]
       # @param name [string]
-      def initialize(package, name)
-        @package = package
+      def initialize(name)
         @name = name
         @sentences = []
       end
