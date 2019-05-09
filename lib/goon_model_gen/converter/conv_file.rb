@@ -4,12 +4,12 @@ module GoonModelGen
   module Converter
     class ConvFile
       attr_reader :path
-      attr_reader :gen_package_path # String
+      attr_reader :goa_gen_package_path # String
       attr_accessor :payload_convs, :result_convs # Hash<String, Definition>
 
-      def initialize(config, gen_package_path)
+      def initialize(config, goa_gen_package_path)
         @path = path
-        @gen_package_path = gen_package_path
+        @goa_gen_package_path = goa_gen_package_path
       end
 
     end

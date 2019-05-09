@@ -24,9 +24,9 @@ module GoonModelGen
         txt = erb.result
         raw = YAML.load(txt)
 
-        gen_dir = raw['gen_dir'] || ::File.basename(path, '.*')
-        gen_package_path = raw['gen_package_path'] || File.join(config.goa_gen_package_path, gen_dir)
-        ConvFile.new(path, gen_package_path).tap do |f|
+        goa_gen_dir = raw['goa_gen_dir'] || ::File.basename(path, '.*')
+        goa_gen_package_path = raw['goa_gen_package_path'] || File.join(config.goa_goa_gen_package_path, goa_gen_dir)
+        ConvFile.new(path, goa_gen_package_path).tap do |f|
           f.payload_convs = load_conv_defs(f, PayloadConv, raw['payloads'])
           f.result_convs = load_conv_defs(f, ResultConv, raw['results'])
         end
