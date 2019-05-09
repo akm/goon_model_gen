@@ -1,0 +1,34 @@
+<%-
+model = type.map[:model].type
+gen_type = type.map[:gen_type].type
+mappings = type.memo['mappings'] || []
+-%>
+
+
+func <%= model.name %>ToResult(m *<%= model.qualified_name %>) *gen.<%= gen_type.name %> {
+  if s == nil {
+    return nil
+  }
+  r := &gen.<%= gen_type.name %>{}
+
+<%-
+mappings.each do |mapping|
+  import GoonModelGen::Golang::Packages.wrap(packages).detect_by(mapping.package_name) if mapping.package_name.present?
+
+  rfield = gen_type.fields.detect{|f| f.name == mapping.name} || ise("Field not found #{mapping.name} of #{gen_typ.package.path}.#{gen_typ.name}")
+  arg_fields = mapping.args.map do |arg|
+    model.fields.detect{|f| f.name == arg} ||
+      raise("Field not found #{arg.inspect} of #{model.package.path}.#{model.name}")
+  end
+-%>
+<%- raise "Multiple arguments for result type mapping is not supported now" if mapping.args.length > 1 -%>
+<%- mfield = arg_fields.first -%>
+  // <%= mfield.name %>
+  r.<%= rfield.name %> = m.<%= mfield.name %>
+
+<%-
+end
+-%>
+
+  return r
+}

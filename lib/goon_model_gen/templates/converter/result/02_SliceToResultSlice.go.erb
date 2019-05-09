@@ -1,0 +1,14 @@
+<%-
+model = type.map[:model].type
+gen_type = type.map[:gen_type].type
+
+func <%= model.name %>SliceToResultSlice(s *[]*<%= model.qualified_name %>) *[]*gen.<%= gen_type.name %> {
+  if s == nil {
+    return nil
+  }
+  r := []*gen.<%= gen_type.name %>{}
+  for _, m := range *s {
+    r = append(r, <%= model.name %>ToResult(m))
+  }
+  return &r
+}
