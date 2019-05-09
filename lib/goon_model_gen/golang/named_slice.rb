@@ -6,18 +6,24 @@ module GoonModelGen
   module Golang
     class NamedSlice < Type
       attr_reader :base_type_name
+      attr_reader :base_type_package_path
       attr_reader :base_type
 
       # @param name [String]
       # @param base_type_name [String]
-      def initialize(name, base_type_name)
+      # @param base_type_package_path [String]
+      def initialize(name, base_type_name, base_type_package_path = nil)
         super(name)
         @base_type_name = base_type_name
+        @base_type_package_path = base_type_package_path
       end
 
       # @param pkgs [Packages]
       def resolve(pkgs)
-        @base_type = pkgs.type_for(base_type_name) || raise("#{base_type_name.inspect} not found")
+        @base_type =
+          base_type_package_path.present? ?
+            pkgs.find_by_path(base_type_package_path).lookup(base_type_name) || raise("#{base_type_name.inspect} not found in #{base_type_package_path}") :
+            pkgs.type_for(base_type_name) || raise("#{base_type_name.inspect} not found")
       end
     end
   end

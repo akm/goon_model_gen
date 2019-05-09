@@ -45,10 +45,11 @@ module GoonModelGen
       end
 
       # @param name [string]
+      # @param base_type_package_path [String]
       # @param base_type_name [String]
       # @return [Slice]
-      def new_named_slice(name, base_type_name)
-        NamedSlice.new(name, "[]#{base_type_name}").tap{|s| add(s) }
+      def new_named_slice(name, base_type_name, base_type_package_path = nil)
+        NamedSlice.new(name, base_type_name, base_type_package_path).tap{|s| add(s) }
       end
 
       # @param name [string]
