@@ -8,7 +8,9 @@ require "goon_model_gen/config"
 require "goon_model_gen/builder/model_builder"
 require "goon_model_gen/builder/store_builder"
 require "goon_model_gen/builder/validation_builder"
+require "goon_model_gen/converter/loader"
 require "goon_model_gen/source/loader"
+require "goon_model_gen/golang/structs_loader"
 require "goon_model_gen/generator"
 
 module GoonModelGen
@@ -54,6 +56,21 @@ module GoonModelGen
       else
         packages.map(&:files).flatten.each do |f|
           new_generator(f, packages).run
+        end
+      end
+    end
+
+    desc "converter FILE1...", "Generate store files from converter YAML files"
+    option :inspect, type: :boolean, desc: "Don't generate any file and show package objects if given"
+    def converter(*paths)
+      loader = Converter::Loader.new(cfg)
+      packages = Golang::StructsLoader.new.process(cfg.structs_json_path) # Golang::Packages
+      if options[:inspect]
+        puts YAML.dump(packages)
+      else
+        paths.each do |path|
+          conf_file = loader.process(path)
+
         end
       end
     end
