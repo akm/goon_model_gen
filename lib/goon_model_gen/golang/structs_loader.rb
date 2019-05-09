@@ -12,6 +12,8 @@ module GoonModelGen
   module Golang
     class StructsLoader
 
+      # @param path [String]
+      # @return [Hash<String,Packages>]
       def process(path)
         erb = ERB.new(::File.read(path), nil, "-")
         erb.filename = path
