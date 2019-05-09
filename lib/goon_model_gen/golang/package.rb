@@ -3,6 +3,7 @@ require "goon_model_gen"
 require "goon_model_gen/golang/struct"
 require "goon_model_gen/golang/enum"
 require "goon_model_gen/golang/named_slice"
+require "goon_model_gen/golang/combination_type"
 require "goon_model_gen/golang/file"
 
 module GoonModelGen
@@ -62,6 +63,12 @@ module GoonModelGen
       # @return [Slice]
       def new_named_slice(name, base_type_name, base_type_package_path = nil)
         NamedSlice.new(name, base_type_name, base_type_package_path).tap{|s| add(s) }
+      end
+
+      # @param name [string]
+      # @return [CombinationType]
+      def new_combination_type(name)
+        CombinationType.new(name).tap{|s| add(s) }
       end
 
       # @param name [string]
