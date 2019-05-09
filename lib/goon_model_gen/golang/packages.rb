@@ -30,8 +30,16 @@ module GoonModelGen
         Package.new(path).tap{|pkg| add(pkg)}
       end
 
-      def detect_by(basename)
-        detect{|pkg| pkg.basename == basename}
+      def detect_by(name)
+        detect{|pkg| pkg.name == name}
+      end
+
+      def find_by_path(path)
+        detect{|pkg| pkg.path == path}
+      end
+
+      def find_or_new(path)
+        find_by_path(path) || new_package(path)
       end
 
       def resolve_type_names(extra_packages = [])

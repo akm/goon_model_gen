@@ -20,7 +20,7 @@ module GoonModelGen
       end
 
       def basename
-        @basename ||= path ? ::File.basename(path, '.*') : nil
+        @basename ||= (path ? ::File.basename(path, '.*') : nil)
       end
 
       def name
