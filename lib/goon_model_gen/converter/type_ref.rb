@@ -2,7 +2,7 @@ require "goon_model_gen"
 
 module GoonModelGen
   module Converter
-    class Model
+    class TypeRef
       attr_reader :name, :package_path
       def initialize(name, package_path)
         @name, @package_path = name, package_path

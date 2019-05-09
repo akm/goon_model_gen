@@ -35,6 +35,7 @@ module GoonModelGen
       def load_conv_defs(f, conv_class, hash)
         hash.each do |name, definition|
           model = load_model_for_conv(definition['model'])
+          gen_type = TypeRef.new(name, File.join(config.goa_gen_package_path, f.basename))
           mappings = load_mappings(definition['mappings'], conv_class)
           conv_class.new(name, model, mappings).tap do |conv|
             conv.file = f
@@ -45,11 +46,11 @@ module GoonModelGen
       def load_model_for_conv(obj)
         case obj
         when Hash
-          Model.new(obj['name'], obj['package_path'])
+          TypeRef.new(obj['name'], obj['package_path'])
         when String
           parts = *obj.split('.', 2)
           pkg = (parts.length > 1) ? ::File.join(config.model_package_path, parts.first) : config.model_package_path
-          Model.new(pkg, parts.last)
+          TypeRef.new(parts.last, pkg)
         else
           raise "Unsupported model type for converter definition: #{obj.inspect}"
         end
