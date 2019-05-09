@@ -59,6 +59,7 @@ module GoonModelGen
       def load_mappings(hash, conv_class)
         hash.map do |(name, props)|
           props ||= {}
+          props = {'arg' => props} if props.is_a?(String)
           args = props['args'] || [props['arg'] || name]
           func, requires_context, returns_error = *conv_class.load_func(props)
           if func.nil? && (args.length > 1)
