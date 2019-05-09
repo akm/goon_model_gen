@@ -37,6 +37,23 @@ module GoonModelGen
           (type.package.path == pkg.path) ? type.name : type.qualified_name
         "#{ name } #{ type_exp } `#{ tags_string }`"
       end
+
+      def ptr?
+        case type
+        when Modifier then (type.prefix == "*")
+        when Type then false
+        else raise "Unsupported type class #{type.inspect}"
+        end
+      end
+
+      def slice?
+        case type
+        when Modifier then (type.prefix == "[]")
+        when NamedSlice then true
+        when Type then false
+        else raise "Unsupported type class #{type.inspect}"
+        end
+      end
     end
   end
 end
