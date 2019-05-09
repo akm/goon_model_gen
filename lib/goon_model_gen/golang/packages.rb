@@ -9,6 +9,17 @@ module GoonModelGen
   module Golang
     class Packages < Array
 
+      class << self
+        def wrap(obj)
+          case obj
+          when Packages then obj
+          when Package then Packages.new.add(obj)
+          when Array then Packages.new.add(*obj)
+          else raise "Unsupported obj for #{self.name}.wrap #{obj.inspect}"
+          end
+        end
+      end
+
       def name_to_type_map
         each_with_object({}) do |pkg, d|
           d.update(pkg.name_to_type_map)

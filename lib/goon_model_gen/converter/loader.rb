@@ -6,8 +6,10 @@ require "yaml"
 require "goon_model_gen/converter/conv_file"
 require "goon_model_gen/converter/payload_conv"
 require "goon_model_gen/converter/result_conv"
-require "goon_model_gen/converter/model"
+require "goon_model_gen/converter/type_ref"
 require "goon_model_gen/converter/mapping"
+
+require "active_support/core_ext/string"
 
 module GoonModelGen
   module Converter
@@ -24,20 +26,20 @@ module GoonModelGen
         txt = erb.result
         raw = YAML.load(txt)
 
-        goa_gen_dir = raw['goa_gen_dir'] || ::File.basename(path, '.*')
-        goa_gen_package_path = raw['goa_gen_package_path'] || File.join(config.goa_goa_gen_package_path, goa_gen_dir)
-        ConvFile.new(path, goa_gen_package_path).tap do |f|
+        converter_dir = raw['converter_dir'] || ::File.basename(path, '.*')
+        converter_package_path = raw['converter_package_path'] || File.join(config.converter_package_path, converter_dir)
+        ConvFile.new(path, converter_package_path).tap do |f|
           f.payload_convs = load_conv_defs(f, PayloadConv, raw['payloads'])
           f.result_convs = load_conv_defs(f, ResultConv, raw['results'])
         end
       end
 
       def load_conv_defs(f, conv_class, hash)
-        hash.each do |name, definition|
+        hash.map do |(name, definition)|
           model = load_model_for_conv(definition['model'])
           gen_type = TypeRef.new(name, File.join(config.goa_gen_package_path, f.basename))
           mappings = load_mappings(definition['mappings'], conv_class)
-          conv_class.new(name, model, mappings).tap do |conv|
+          conv_class.new(name, model, gen_type, mappings).tap do |conv|
             conv.file = f
           end
         end
@@ -65,7 +67,9 @@ module GoonModelGen
           if func.nil? && (args.length > 1)
             raise "Invalid argument length: #{args.length} for #{name}: #{args.inspect}"
           end
-          Mapping.new(name, args, func, requires_context, returns_error)
+          Mapping.new(name, args, func, requires_context, returns_error).tap do |m|
+            m.resolve_package_path(config)
+          end
         end
       end
 

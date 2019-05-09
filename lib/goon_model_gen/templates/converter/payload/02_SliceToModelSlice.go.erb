@@ -1,0 +1,36 @@
+<%-
+model = type.map[:model].type
+gen_type = type.map[:gen_type].type
+mappings = type.memo['mappings'] || []
+requires_context = mappings.any?(&:requires_context)
+arg_def_prefix = requires_context ? 'ctx context.Context, ' : nil
+arg_prefix = requires_context ? 'ctx, ' : nil
+-%>
+
+func <%= gen_type.name %>SliceToModelSlice(<%= arg_def_prefix %>payloads *[]*gen.<%= gen_type.name %>) (*[]<%= model.qualified_name %>, error) {
+  r, err := <%= gen_type.name %>SliceToModelPtrSlice(<%= arg_prefix %>payloads)
+  if err != nil {
+		return nil, err
+	}
+
+  s := []<%= model.qualified_name %>{}
+	for _, m := range *r {
+		s = append(s, *m)
+	}
+	return &s, nil
+}
+
+func <%= gen_type.name %>SliceToModelPtrSlice(<%= arg_def_prefix %>payloads *[]*gen.<%= gen_type.name %>) (*[]*<%= model.qualified_name %>, error) {
+	if payloads == nil {
+		return nil, converters.NoPayloadGiven
+	}
+	s := []*<%= model.qualified_name %>{}
+	for _, payload := range *payloads {
+		m, err := <%= gen_type.name %>ToModel(<%= arg_prefix %>payload)
+		if err != nil {
+			return nil, err
+		}
+		s = append(s, m)
+	}
+	return &s, nil
+}

@@ -1,0 +1,19 @@
+<%-
+model = type.map[:model].type
+gen_type = type.map[:gen_type].type
+mappings = type.memo['mappings'] || []
+requires_context = mappings.any?(&:requires_context)
+arg_def_prefix = requires_context ? 'ctx context.Context, ' : nil
+arg_prefix = requires_context ? 'ctx, ' : nil
+-%>
+
+func <%= gen_type.name %>ToModel(<%= arg_def_prefix %>payload *gen.<%= gen_type.name %>) (*<%= model.qualified_name %>, error) {
+	if payload == nil {
+		return nil, converters.NoPayloadGiven
+	}
+  var m <%= model.qualified_name %>
+  if err := <%= gen_type.name %>AssignModel(<%= arg_prefix %>payload, &m); err != nil {
+    return nil, err
+  }
+  return &m, nil
+}

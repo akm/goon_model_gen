@@ -1,0 +1,82 @@
+<%-
+model = type.map[:model].type
+gen_type = type.map[:gen_type].type
+mappings = type.memo['mappings'] || []
+requires_context = mappings.any?(&:requires_context)
+arg_def_prefix = requires_context ? 'ctx context.Context, ' : nil
+arg_prefix = requires_context ? 'ctx, ' : nil
+-%>
+
+func <%= gen_type.name %>AssignModel(<%= arg_def_prefix %>payload *gen.<%= gen_type.name %>, m *<%= model.qualified_name %>) error {
+	if payload == nil {
+		return converters.NoPayloadGiven
+	}
+	if m == nil {
+		return converters.NoModelGiven
+	}
+
+<%-
+mappings.each do |mapping|
+  import GoonModelGen::Golang::Packages.wrap(packages).detect_by(mapping.package_name) if mapping.package_name.present?
+
+  mfield = model.fields.detect{|f| f.name == mapping.name} || raise("Field not found #{mapping.name} of #{model.package.path}.#{model.name}")
+  argFields = mapping.args.map do |arg|
+    gen_type.fields.detect{|f| f.name == arg} ||
+      raise("Field not found #{arg.inspect} of #{gen_type.package.path}.#{gen_type.name}")
+  end
+-%>
+  // <%= mfield.name %>
+<%- if mapping.args.length == 1 -%>
+<%-
+      pfield = argFields.first
+      if mapping.func.nil? || !mapping.returns_error
+        arg = '%spayload.%s' % [pfield.ptr? ? '*' : '', pfield.name]
+        right_side = mapping.func.blank? ? arg :
+          '%s(%s%s)' % [mapping.func, mapping.requires_context ? 'ctx, ' : '', arg]
+-%>
+<%-     if pfield.ptr? -%>
+  if payload.<%= pfield.name %> != nil {
+    m.<%= mfield.name %> = <%= right_side %>
+  }
+<%-     else -%>
+  m.<%= mfield.name %> = <%= right_side %>
+<%-     end -%>
+<%-
+      else
+        arg = '%spayload.%s' % [pfield.ptr? ? '*' : pfield.slice? ? '&' :'', pfield.name]
+        right_side = '%s(%s%s)' % [mapping.func, mapping.requires_context ? 'ctx, ' : '', arg]
+-%>
+<%-     if pfield.ptr? -%>
+  if payload.<%= pfield.name %> != nil {
+<%-     end -%>
+  if v, err := <%= right_side %>; err != nil {
+    return err
+  } else {
+    m.<%= mfield.name %> = <%= (pfield.slice? || mapping.requires_context)  ? '*' : '' %>v
+  }
+<%-     if pfield.ptr? -%>
+  }
+<%-     end -%>
+<%-   end -%>
+
+<%- else -%>
+<%-   arg_str = argFields.map{|f| "payload.#{f.name}"}.join(", ") %>
+<%-   if !mapping.returns_error # => requries_context is false -%>
+  m.<%= mfield.name %> = <%= mapping.func %>(<%= arg_str %>)
+<%-   else
+        arg_str = (mapping.requries_context ? 'ctx, ' : '') + arg_str
+-%>
+  if v, err := <%= mapping.func %>(<%= arg_str %>); err != nil {
+    return err
+  } else {
+    m.<%= mfield.name %> = v
+  }
+<%-   end -%>
+
+<%- end -%>
+
+<%-
+end
+-%>
+  return nil
+}

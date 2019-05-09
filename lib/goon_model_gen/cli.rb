@@ -8,6 +8,7 @@ require "goon_model_gen/config"
 require "goon_model_gen/builder/model_builder"
 require "goon_model_gen/builder/store_builder"
 require "goon_model_gen/builder/validation_builder"
+require "goon_model_gen/builder/converter_builder"
 require "goon_model_gen/converter/loader"
 require "goon_model_gen/source/loader"
 require "goon_model_gen/golang/structs_loader"
@@ -64,13 +65,19 @@ module GoonModelGen
     option :inspect, type: :boolean, desc: "Don't generate any file and show package objects if given"
     def converter(*paths)
       loader = Converter::Loader.new(cfg)
-      packages = Golang::StructsLoader.new.process(cfg.structs_json_path) # Golang::Packages
-      if options[:inspect]
-        puts YAML.dump(packages)
-      else
-        paths.each do |path|
-          conf_file = loader.process(path)
+      package_hash = Golang::StructsLoader.new.process(cfg.structs_json_path) # Golang::Packages
+      packages = package_hash.values.flatten
+      b = Builder::ConverterBuilder.new(cfg.converter_package_path, loader, Golang::Packages.new.add(*packages))
+      conv_packages = b.build(paths)
 
+      if options[:inspect]
+        puts YAML.dump(conv_packages)
+      else
+        conv_packages.map(&:files).flatten.each do |f|
+          new_generator(f, packages).tap do |g|
+            g.import(cfg.converter_package_path)
+            g.run
+          end
         end
       end
     end
