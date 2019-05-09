@@ -22,7 +22,7 @@ module GoonModelGen
       def resolve(pkgs)
         @base_type =
           base_type_package_path.present? ?
-            pkgs.find_by_path(base_type_package_path).lookup(base_type_name) || raise("#{base_type_name.inspect} not found in #{base_type_package_path}") :
+            pkgs.type_for(base_type_name, base_type_package_path) :
             pkgs.type_for(base_type_name) || raise("#{base_type_name.inspect} not found")
       end
     end

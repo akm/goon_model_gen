@@ -55,9 +55,19 @@ module GoonModelGen
       end
 
       # @param type_name [string]
+      # @param package_path [string]
       # @param [Type]
-      def lookup(type_name)
-        if type_name.include?('.')
+      def lookup(type_name, package_path = nil)
+        if package_path.present?
+          parts = type_name.split('.', 2)
+          if parts.first == "github"
+            require 'pry'
+            binding.pry
+          end
+          name = parts.last
+          pkg = find_by_path(package_path) || raise("Package not found for #{name.inspect} by #{package_path.inspect}")
+          return pkg.lookup(name) || raise("#{name.inspect} not found in #{package_path.inspect}")
+        elsif type_name.include?('.')
           pkg_name, name = type_name.split('.', 2)
           pkg = detect_by(pkg_name)
           return pkg ? pkg.lookup(name) : nil
@@ -70,10 +80,10 @@ module GoonModelGen
         end
       end
 
-      def type_for(expression)
+      def type_for(expression, package_path = nil)
         return nil if expression.blank?
         Modifier.parse(expression) do |name|
-          lookup(name)
+          lookup(name, package_path)
         end
       end
     end
