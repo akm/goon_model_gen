@@ -46,16 +46,21 @@ module GoonModelGen
       end
 
       def load_model_for_conv(obj)
+        pkg_name, pkg_path = nil, nil
         case obj
         when Hash
-          TypeRef.new(obj['name'], obj['package_path'])
+          pkg_name, pkg_path = obj['name'], obj['package_path']
         when String
-          parts = *obj.split('.', 2)
-          pkg = (parts.length > 1) ? ::File.join(config.model_package_path, parts.first) : config.model_package_path
-          TypeRef.new(parts.last, pkg)
+          pkg_name = obj
         else
           raise "Unsupported model type for converter definition: #{obj.inspect}"
         end
+        if pkg_path.blank?
+          parts = *pkg_name.split('.', 2)
+          pkg_path = (parts.length > 1) ? ::File.join(config.model_package_path, parts.first) : config.model_package_path
+          pkg_name = parts.last
+        end
+        TypeRef.new(pkg_name, pkg_path)
       end
 
       def load_mappings(hash, conv_class)
