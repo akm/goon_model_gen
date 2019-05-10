@@ -1,15 +1,26 @@
 <%-
 model = type.map[:model].type
 gen_type = type.map[:gen_type].type
+
+goon_model = model.fields.any?{|f| !f.tags['goon'].nil? }
+model_slice = model.package.types.detect do |t|
+  t.is_a?(GoonModelGen::Golang::NamedSlice) &&
+  (
+    (t.base_type == model) ||
+    (t.base_type.is_a?(GoonModelGen::Golang::Modifier) && (t.base_type.prefix == '*') && (t.base_type.target == model) )
+  )
+end
+
+plural_model_type_name = model_slice ? model_slice.qualified_name : (goon_model ? '[]*' : '[]') + model.qualified_name
 -%>
 
-func <%= model.name %>SliceToResultSlice(s *[]*<%= model.qualified_name %>) *[]*<%= gen_type.qualified_name(dependencies) %> {
+func <%= model.name %>SliceToResultSlice(s *<%= plural_model_type_name %>) *[]*<%= gen_type.qualified_name(dependencies) %> {
   if s == nil {
     return nil
   }
   r := []*<%= gen_type.qualified_name(dependencies) %>{}
   for _, m := range *s {
-    r = append(r, <%= model.name %>ToResult(m))
+    r = append(r, <%= model.name %>ToResult(<%= goon_model ? '' : '&' %>m))
   }
   return &r
 }

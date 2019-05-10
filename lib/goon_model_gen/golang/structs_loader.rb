@@ -44,7 +44,8 @@ module GoonModelGen
               pkg.new_struct(type_hash['Name']).tap do |s|
                 type_hash['Fields'].each do |f|
                   t = f['Type']
-                  s.new_field(f['Name'], t['Representation'], nil)
+                  tags = (f['Tag'] || {}).each_with_object({}){|(k,v), d| d[k] = v.split(',')}
+                  s.new_field(f['Name'], t['Representation'], tags)
                 end
               end
             elsif type_hash['Kind'] == 'slice'
