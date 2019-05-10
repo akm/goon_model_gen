@@ -25,7 +25,7 @@ mappings.each do |mapping|
       raise("Field not found #{arg.inspect} of #{gen_type.package.path}.#{gen_type.name}")
   end
 -%>
-  // <%= mfield.name %>
+  // <%= mfield.short_desc %> <== <%= argFields.map(&:short_desc).join(', ') %>
 <%- if mapping.args.length == 1 -%>
 <%-
       pfield = argFields.first

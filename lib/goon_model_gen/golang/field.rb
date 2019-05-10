@@ -82,6 +82,10 @@ module GoonModelGen
         else raise "Unsupported type class #{type.inspect}"
         end
       end
+
+      def short_desc
+        "#{name}: #{type.qualified_name}"
+      end
     end
   end
 end

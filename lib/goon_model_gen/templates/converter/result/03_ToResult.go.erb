@@ -26,7 +26,7 @@ mappings.each do |mapping|
       raise("Field not found #{arg.inspect} of #{model.package.path}.#{model.name}")
   end
 -%>
-  // <%= mfield.name %>
+  // <%= rfield.short_desc %> <== <%= arg_fields.map(&:short_desc).join(', ') %>
 <%-
   mfield = arg_fields.first
   arg = "m.#{mfield.name}"
