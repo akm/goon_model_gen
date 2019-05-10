@@ -66,7 +66,9 @@ module GoonModelGen
     def converter(*paths)
       loader = Converter::Loader.new(cfg)
       package_hash = Golang::StructsLoader.new.process(cfg.structs_json_path) # Golang::Packages
-      packages = package_hash.values.flatten
+      packages = Golang::Packages.wrap(package_hash.values.flatten)
+      converter_package = packages.find_or_new(cfg.converter_package_path)
+
       b = Builder::ConverterBuilder.new(cfg.converter_package_path, loader, Golang::Packages.new.add(*packages))
       conv_packages = b.build(paths)
 
@@ -74,10 +76,8 @@ module GoonModelGen
         puts YAML.dump(conv_packages)
       else
         conv_packages.map(&:files).flatten.each do |f|
-          new_generator(f, packages).tap do |g|
-            g.import(cfg.converter_package_path)
-            g.run
-          end
+          new_generator(f, packages).
+            run(converter_package: converter_package)
         end
       end
     end
