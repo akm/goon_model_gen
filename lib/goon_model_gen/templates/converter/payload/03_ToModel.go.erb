@@ -7,7 +7,7 @@ arg_def_prefix = requires_context ? 'ctx context.Context, ' : nil
 arg_prefix = requires_context ? 'ctx, ' : nil
 -%>
 
-func <%= gen_type.name %>ToModel(<%= arg_def_prefix %>payload *gen.<%= gen_type.name %>) (*<%= model.qualified_name %>, error) {
+func <%= gen_type.name %>ToModel(<%= arg_def_prefix %>payload *<%= gen_type.qualified_name(dependencies) %>) (*<%= model.qualified_name %>, error) {
 	if payload == nil {
 		return nil, converters.NoPayloadGiven
 	}

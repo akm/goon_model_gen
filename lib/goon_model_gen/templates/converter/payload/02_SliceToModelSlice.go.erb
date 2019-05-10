@@ -7,7 +7,7 @@ arg_def_prefix = requires_context ? 'ctx context.Context, ' : nil
 arg_prefix = requires_context ? 'ctx, ' : nil
 -%>
 
-func <%= gen_type.name %>SliceToModelSlice(<%= arg_def_prefix %>payloads *[]*gen.<%= gen_type.name %>) (*[]<%= model.qualified_name %>, error) {
+func <%= gen_type.name %>SliceToModelSlice(<%= arg_def_prefix %>payloads *[]*<%= gen_type.qualified_name(dependencies) %>) (*[]<%= model.qualified_name %>, error) {
   r, err := <%= gen_type.name %>SliceToModelPtrSlice(<%= arg_prefix %>payloads)
   if err != nil {
 		return nil, err
@@ -20,7 +20,7 @@ func <%= gen_type.name %>SliceToModelSlice(<%= arg_def_prefix %>payloads *[]*gen
 	return &s, nil
 }
 
-func <%= gen_type.name %>SliceToModelPtrSlice(<%= arg_def_prefix %>payloads *[]*gen.<%= gen_type.name %>) (*[]*<%= model.qualified_name %>, error) {
+func <%= gen_type.name %>SliceToModelPtrSlice(<%= arg_def_prefix %>payloads *[]*<%= gen_type.qualified_name(dependencies) %>) (*[]*<%= model.qualified_name %>, error) {
 	if payloads == nil {
 		return nil, converters.NoPayloadGiven
 	}

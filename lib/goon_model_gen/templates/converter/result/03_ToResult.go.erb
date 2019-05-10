@@ -5,11 +5,11 @@ mappings = type.memo['mappings'] || []
 -%>
 
 
-func <%= model.name %>ToResult(m *<%= model.qualified_name %>) *gen.<%= gen_type.name %> {
+func <%= model.name %>ToResult(m *<%= model.qualified_name %>) *<%= gen_type.qualified_name(dependencies) %> {
   if m == nil {
     return nil
   }
-  r := &gen.<%= gen_type.name %>{}
+  r := &<%= gen_type.qualified_name(dependencies) %>{}
 
 <%-
 mappings.each do |mapping|
