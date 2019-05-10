@@ -11,7 +11,7 @@ model_slice = model.package.types.detect do |t|
   t.is_a?(GoonModelGen::Golang::NamedSlice) &&
   (
     (t.base_type == model) ||
-    (t.base_type.is_a?(GoonModelGen::Golang::Modifier) && (t.base_type.prefix == '*') && (t.base_type.target == model) )
+    (t.ptr_slice? && (t.base_type.target == model))
   )
 end
 

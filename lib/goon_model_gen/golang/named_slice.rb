@@ -25,6 +25,10 @@ module GoonModelGen
             pkgs.type_for(base_type_name, base_type_package_path) :
             pkgs.type_for(base_type_name) || raise("#{base_type_name.inspect} not found")
       end
+
+      def ptr_slice?
+        base_type.is_a?(GoonModelGen::Golang::Modifier) && (base_type.prefix == '*')
+      end
     end
   end
 end
