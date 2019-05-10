@@ -15,11 +15,6 @@ func <%= model.name %>ToResult(m *<%= model.qualified_name %>) *<%= gen_type.qua
 mappings.each do |mapping|
   import GoonModelGen::Golang::Packages.wrap(packages).detect_by(mapping.package_name) if mapping.package_name.present?
 
-  # if mapping.name == "ParentID"
-  #   require 'pry'
-  #   binding.pry
-  # end
-
   rfield = gen_type.fields.detect{|f| f.name == mapping.name} || raise("Field not found #{mapping.name} of #{gen_type.package.path}.#{gen_type.name}")
   arg_fields = mapping.args.map do |arg|
     model.fields.detect{|f| f.name == arg} ||

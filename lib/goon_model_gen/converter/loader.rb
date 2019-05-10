@@ -46,7 +46,7 @@ module GoonModelGen
       end
 
       def load_model_for_conv(obj)
-        pkg_name, pkg_path = nil, nil
+        pkg_name, pkg_path, pkg_base_path = nil, nil, nil
         slice_with_ptr = nil
         case obj
         when Hash
@@ -54,15 +54,12 @@ module GoonModelGen
           slice_with_ptr = obj['slice_with_ptr']
         when String
           pkg_name = obj
+          pkg_base_path = config.model_package_path
         else
           raise "Unsupported model type for converter definition: #{obj.inspect}"
         end
-        if pkg_path.blank?
-          parts = *pkg_name.split('.', 2)
-          pkg_path = (parts.length > 1) ? ::File.join(config.model_package_path, parts.first) : config.model_package_path
-          pkg_name = parts.last
-        end
         TypeRef.new(pkg_name, pkg_path).tap do |t|
+          t.package_base_path = pkg_base_path
           t.slice_with_ptr = slice_with_ptr
         end
       end

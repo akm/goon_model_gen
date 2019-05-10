@@ -50,8 +50,10 @@ module GoonModelGen
           }.each do |template_dir, convs|
             convs.each do |conv|
               conv_type = pkg.new_combination_type(conv.name).tap do |t|
-                t.add(:model, conv.model.name, conv.model.package_path)
-                t.add(:gen_type, conv.gen_type.name, conv.gen_type.package_path)
+                m = conv.model
+                g = conv.gen_type
+                t.add(:model, m.name, m.package_path, m.package_base_path)
+                t.add(:gen_type, g.name, g.package_path, g.package_base_path)
                 t.memo['mappings'] = conv.mappings
                 unless conv.model.slice_with_ptr.nil?
                   t.memo['model_slice_with_ptr'] = conv.model.slice_with_ptr

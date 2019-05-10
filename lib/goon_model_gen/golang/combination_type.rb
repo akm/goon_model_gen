@@ -6,18 +6,19 @@ module GoonModelGen
   module Golang
     class CombinationType < Type
       class ItemType
-        attr_reader :name, :package_path
+        attr_reader :name, :package_path, :package_base_path
         attr_reader :type
-        def initialize(name, package_path)
-          @name, @package_path = name, package_path
+        def initialize(name, package_path, package_base_path = nil)
+          @name, @package_path, @package_base_path = name, package_path, package_base_path
+        end
+
+        def to_hash
+          {name: name, package_path: package_path, package_base_path: package_base_path}
         end
 
         # @param pkgs [Packages]
         def resolve(pkgs)
-          @type =
-            package_path.present? ?
-              pkgs.type_for(name, package_path) :
-              pkgs.type_for(name) || raise("#{name.inspect} not found")
+          @type = pkgs.type_by(**to_hash) || raise("Type not found by #{to_hash.inspect}")
         end
       end
 
@@ -29,8 +30,8 @@ module GoonModelGen
         @map = {}
       end
 
-      def add(key, name, package_path)
-        map[key] = ItemType.new(name, package_path)
+      def add(key, name, package_path, package_base_path = nil)
+        map[key] = ItemType.new(name, package_path, package_base_path)
       end
 
       # @param pkgs [Packages]
