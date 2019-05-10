@@ -83,8 +83,10 @@ module GoonModelGen
         end
       end
 
-      def short_desc
-        "#{name}: #{type.qualified_name}"
+      # @param pkg2alias [Hash<String,String>]
+      # @return [string]
+      def short_desc(pkg2alias = nil)
+        "#{name}: #{type.qualified_name(pkg2alias)}"
       end
     end
   end
