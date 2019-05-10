@@ -1,7 +1,18 @@
 <%-
 model = type.map[:model].type
 gen_type = type.map[:gen_type].type
+mappings = type.memo['mappings'] || []
 
 import model.package
 import :gen, gen_type.package
+
+if mappings.any?{|m| m.args.length > 1}
+  raise "Multiple arguments for result type mapping is not supported now"
+end
+if mappings.any?(&:returns_error)
+  raise "returns_error (by writer) for result type mapping is not supported now"
+end
+if mappings.any?(&:requires_context)
+  raise "requires_context (by saver) for result type mapping is not supported now"
+end
 -%>

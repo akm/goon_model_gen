@@ -1,5 +1,11 @@
 require "goon_model_gen"
 
+require "goon_model_gen/golang/type"
+require "goon_model_gen/golang/struct"
+require "goon_model_gen/golang/named_slice"
+require "goon_model_gen/golang/builtin"
+require "goon_model_gen/golang/modifier"
+
 module GoonModelGen
   module Golang
     class Field
@@ -50,6 +56,28 @@ module GoonModelGen
         case type
         when Modifier then (type.prefix == "[]")
         when NamedSlice then true
+        when Type then false
+        else raise "Unsupported type class #{type.inspect}"
+        end
+      end
+
+      def struct?
+        case type
+        when Modifier then false
+        when Struct then true
+        when Type then false
+        else raise "Unsupported type class #{type.inspect}"
+        end
+      end
+
+      def value_ptr?
+        case type
+        when Modifier then
+          return false unless type.prefix == '*'
+          case type.target
+          when Builtin then type.target.name != 'interface'
+          else false
+          end
         when Type then false
         else raise "Unsupported type class #{type.inspect}"
         end
