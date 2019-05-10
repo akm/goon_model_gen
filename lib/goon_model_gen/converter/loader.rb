@@ -29,8 +29,8 @@ module GoonModelGen
         converter_dir = raw['converter_dir'] || ::File.basename(path, '.*')
         converter_package_path = raw['converter_package_path'] || File.join(config.converter_package_path, converter_dir)
         ConvFile.new(path, converter_package_path).tap do |f|
-          f.payload_convs = load_conv_defs(f, PayloadConv, raw['payloads'])
-          f.result_convs = load_conv_defs(f, ResultConv, raw['results'])
+          f.payload_convs = load_conv_defs(f, PayloadConv, raw['payloads'] || {})
+          f.result_convs = load_conv_defs(f, ResultConv, raw['results'] || {})
         end
       end
 
