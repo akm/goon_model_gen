@@ -47,9 +47,11 @@ module GoonModelGen
 
       def load_model_for_conv(obj)
         pkg_name, pkg_path = nil, nil
+        slice_with_ptr = nil
         case obj
         when Hash
           pkg_name, pkg_path = obj['name'], obj['package_path']
+          slice_with_ptr = obj['slice_with_ptr']
         when String
           pkg_name = obj
         else
@@ -60,7 +62,9 @@ module GoonModelGen
           pkg_path = (parts.length > 1) ? ::File.join(config.model_package_path, parts.first) : config.model_package_path
           pkg_name = parts.last
         end
-        TypeRef.new(pkg_name, pkg_path)
+        TypeRef.new(pkg_name, pkg_path).tap do |t|
+          t.slice_with_ptr = slice_with_ptr
+        end
       end
 
       def load_mappings(hash, conv_class)

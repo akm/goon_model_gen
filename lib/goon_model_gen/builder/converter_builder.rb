@@ -53,6 +53,9 @@ module GoonModelGen
                 t.add(:model, conv.model.name, conv.model.package_path)
                 t.add(:gen_type, conv.gen_type.name, conv.gen_type.package_path)
                 t.memo['mappings'] = conv.mappings
+                unless conv.model.slice_with_ptr.nil?
+                  t.memo['model_slice_with_ptr'] = conv.model.slice_with_ptr
+                end
               end
               procs << Proc.new{ build_sentences_with(template_dir, conv_type, nil) }
             end
