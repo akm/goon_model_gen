@@ -29,13 +29,21 @@ mappings.each do |mapping|
 <%- if mapping.args.length == 1 -%>
 <%-
       pfield = argFields.first
+
+      assignable_condition = nil
+      if pfield.ptr?
+        assignable_condition = "payload.#{ pfield.name } != nil"
+        if !mapping.allow_zero &&  pfield.value_ptr? && pfield.type.target.name =~ /\Aint\z|\Aint8\z|\Aint16\z|\Aint32\z|\Aint64\z|\Auint\z|\Auint8\z|\Auint16\z|\Auint32\z|\Auint64\z/
+          assignable_condition << " && *payload.#{ pfield.name } != 0"
+        end
+      end
       if mapping.func.nil? || !mapping.returns_error
         arg = '%spayload.%s' % [pfield.ptr? ? '*' : '', pfield.name]
         right_side = mapping.func.blank? ? arg :
           '%s(%s%s)' % [mapping.func, mapping.requires_context ? 'ctx, ' : '', arg]
 -%>
-<%-     if pfield.ptr? -%>
-  if payload.<%= pfield.name %> != nil {
+<%-     if assignable_condition -%>
+  if <%= assignable_condition %> {
     m.<%= mfield.name %> = <%= right_side %>
   }
 <%-     else -%>
@@ -46,15 +54,15 @@ mappings.each do |mapping|
         arg = '%spayload.%s' % [pfield.ptr? ? '*' : pfield.slice? ? '&' :'', pfield.name]
         right_side = '%s(%s%s)' % [mapping.func, mapping.requires_context ? 'ctx, ' : '', arg]
 -%>
-<%-     if pfield.ptr? -%>
-  if payload.<%= pfield.name %> != nil {
+<%-     if assignable_condition -%>
+  if <%= assignable_condition %> {
 <%-     end -%>
   if v, err := <%= right_side %>; err != nil {
     return err
   } else {
     m.<%= mfield.name %> = <%= (pfield.slice? || mapping.requires_context)  ? '*' : '' %>v
   }
-<%-     if pfield.ptr? -%>
+<%-     if assignable_condition -%>
   }
 <%-     end -%>
 <%-   end -%>

@@ -74,6 +74,7 @@ module GoonModelGen
             raise "Invalid argument length: #{args.length} for #{name}: #{args.inspect}"
           end
           Mapping.new(name, args, func, requires_context, returns_error).tap do |m|
+            m.allow_zero = props['allow_zero']
             m.resolve_package_path(config)
           end
         end

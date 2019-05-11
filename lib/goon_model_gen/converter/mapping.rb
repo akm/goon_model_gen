@@ -5,6 +5,7 @@ module GoonModelGen
     class Mapping
       attr_reader :name, :args, :func, :requires_context, :returns_error
       attr_accessor :package_base_path, :package_name
+      attr_accessor :allow_zero # for int or uint only
       def initialize(name, args, func, requires_context, returns_error)
         @name, @args, @func, @requires_context, @returns_error = name, args, func, requires_context, returns_error
       end
