@@ -19,7 +19,7 @@ module GoonModelGen
 
       # @param pkgs [Packages]
       def resolve(pkgs)
-        @base_type = pkgs.type_for(base_type_name) || raise("#{base_type_name.inspect} not found")
+        @base_type = pkgs.type_for(base_type_name) || raise("#{base_type_name.inspect} not found for #{name}")
       end
     end
   end
