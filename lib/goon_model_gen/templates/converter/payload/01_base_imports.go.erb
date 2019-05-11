@@ -1,0 +1,11 @@
+<%-
+model = type.map[:model].type
+gen_type = type.map[:gen_type].type
+
+import model.package
+import :gen, gen_type.package
+
+mappings = type.memo['mappings'] || []
+requires_context = mappings.any?(&:requires_context)
+import 'context' if requires_context
+-%>

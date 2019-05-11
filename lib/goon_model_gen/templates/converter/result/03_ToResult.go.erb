@@ -1,0 +1,50 @@
+<%-
+model = type.map[:model].type
+gen_type = type.map[:gen_type].type
+mappings = type.memo['mappings'] || []
+-%>
+
+
+func <%= model.name %>ToResult(m *<%= model.qualified_name %>) *<%= gen_type.qualified_name(dependencies) %> {
+  if m == nil {
+    return nil
+  }
+  r := &<%= gen_type.qualified_name(dependencies) %>{}
+
+<%-
+mappings.each do |mapping|
+  import GoonModelGen::Golang::Packages.wrap(packages).detect_by(mapping.package_name) if mapping.package_name.present?
+
+  rfield = gen_type.fields.detect{|f| f.name == mapping.name} || raise("Field not found #{mapping.name} of #{gen_type.package.path}.#{gen_type.name}")
+  arg_fields = mapping.args.map do |arg|
+    model.fields.detect{|f| f.name == arg} ||
+      raise("Field not found #{arg.inspect} of #{model.package.path}.#{model.name}")
+  end
+-%>
+  // <%= rfield.short_desc(dependencies) %> <== <%= arg_fields.map{|f| f.short_desc(dependencies) }.join(', ') %>
+<%-
+  mfield = arg_fields.first
+  arg = "m.#{mfield.name}"
+  if mfield.struct? || mfield.slice?
+    arg = "&#{arg}"
+    raise "Struct field or Slice field requires func for mapping" if mapping.func.blank?
+  end
+  right_side_main = mapping.func ? "#{mapping.func}(#{arg})" : arg
+  right_side = (rfield.slice? ? '*' : '') + right_side_main
+-%>
+<%- if rfield.value_ptr? -%>
+  {
+    v := <%= right_side_main %>
+    r.<%= rfield.name %> = &v
+  }
+
+<%- else -%>
+  r.<%= rfield.name %> = <%= right_side %>
+
+<%- end -%>
+<%-
+end
+-%>
+
+  return r
+}

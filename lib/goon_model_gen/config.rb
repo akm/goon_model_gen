@@ -20,7 +20,10 @@ module GoonModelGen
       store_package_path
       converter_dir
       converter_package_path
+      goa_gen_dir
+      goa_gen_package_path
       structs_gen_dir
+      structs_json_path
       validator_package_path
       version_comment
     ].freeze
@@ -41,6 +44,7 @@ module GoonModelGen
       @converter_package_path ||= join_paths(@base_package_path, @converter_dir)
       @goa_gen_package_path   ||= join_paths(@base_package_path, @goa_gen_dir)
       @structs_gen_dir ||= "./cmd/structs"
+      @structs_json_path ||= "./structs.json"
       @version_comment ||= false
       self
     end

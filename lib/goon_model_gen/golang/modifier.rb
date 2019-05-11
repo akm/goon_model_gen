@@ -27,8 +27,10 @@ module GoonModelGen
         prefix + target.name
       end
 
-      def qualified_name
-        prefix + target.qualified_name
+      # @param pkg2alias [Hash<String,String>]
+      # @return [string]
+      def qualified_name(pkg2alias = nil)
+        prefix + target.qualified_name(pkg2alias)
       end
 
       # @param pkgs [Packages]
