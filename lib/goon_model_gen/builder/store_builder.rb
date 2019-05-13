@@ -30,7 +30,12 @@ module GoonModelGen
           types.select{|t| t.is_a?(Source::Struct) && t.id_name && t.id_type }.each do |t|
             store_type = pkg.new_struct(t.name + "Store")
             procs << Proc.new{ build_sentences('store', 'goon', t, store_type) }
-            store_type.memo[:model] = model_packages.detect_by(t.file.basename).lookup(t.name)
+            store_type.memo[:model] =
+              begin
+                pkg = model_packages.detect_by(t.file.basename)
+                raise "Package not found for #{t.file.basename}" unless pkg
+                pkg.lookup(t.name)
+              end
           end
         end
         return pkg, procs
