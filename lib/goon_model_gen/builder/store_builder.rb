@@ -32,7 +32,8 @@ module GoonModelGen
             procs << Proc.new{ build_sentences('store', 'goon', t, store_type) }
             store_type.memo[:model] =
               begin
-                pkg = model_packages.detect_by(t.file.basename)
+                pkg_name = Golang::Package.regularize_name(t.file.basename)
+                pkg = model_packages.detect_by(pkg_name)
                 raise "Package not found for #{t.file.basename}" unless pkg
                 pkg.lookup(t.name)
               end
