@@ -9,6 +9,12 @@ require "goon_model_gen/golang/file"
 module GoonModelGen
   module Golang
     class Package
+      class << self
+        def regularize_name(name)
+          name.gsub(/[\-\_]/, '').downcase
+        end
+      end
+
       attr_reader :path
       attr_reader :types
       attr_reader :files
@@ -25,7 +31,7 @@ module GoonModelGen
       end
 
       def name
-        @name ||= basename ? basename.gsub(/[\-\_]/, '').downcase : nil
+        @name ||= basename ? self.class.regularize_name(basename) : nil
       end
 
       def merge!(other)
