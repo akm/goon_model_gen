@@ -5,7 +5,14 @@ require "goon_model_gen/golang/type"
 module GoonModelGen
   module Golang
     class Enum < Type
-      attr_reader :base_type_name, :map
+      class Element
+        attr_reader :value, :name
+        def initialize(value, name)
+          @value, @name = value, name
+        end
+      end
+
+      attr_reader :base_type_name, :elements
       attr_reader :base_type
 
       # @param name [String]
@@ -15,6 +22,14 @@ module GoonModelGen
         super(name)
         @base_type_name = base_type_name
         @map = map
+      end
+
+      # @yieldparam value [Object]
+      # @yieldparam name [String]
+      def each_value_and_name
+        elements.each do |i|
+          yield(i.value, i.name)
+        end
       end
 
       # @param pkgs [Packages]
