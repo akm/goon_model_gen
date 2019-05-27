@@ -35,10 +35,10 @@ module GoonModelGen
 
       # @param name [string]
       # @param base_type [String]
-      # @param map [Hash<Object,Hash>] elements of enum from YAML
+      # @param elements [Hash<Object,Hash>] elements of enum from YAML
       # @return [Enum]
-      def new_enum(name, base_type, map)
-        Enum.new(name, base_type, map).tap do |t|
+      def new_enum(name, base_type, elements)
+        Enum.new(name, base_type, elements).tap do |t|
           t.context = self.context
           types.push(t)
         end
