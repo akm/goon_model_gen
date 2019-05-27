@@ -17,11 +17,16 @@ module GoonModelGen
 
       # @param name [String]
       # @param base_type_name [String]
-      # @param map [Hash<Object,String>]
-      def initialize(name, base_type_name, map)
+      def initialize(name, base_type_name)
         super(name)
         @base_type_name = base_type_name
-        @map = map
+        @elements = []
+      end
+
+      # @param value [Object]
+      # @param name [String]
+      def add(value, name)
+        elements << Element.new(value, name)
       end
 
       # @yieldparam value [Object]
