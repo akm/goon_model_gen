@@ -52,7 +52,7 @@ module GoonModelGen
               base_type_hash = base_type_hash_from(type_hash['Elem'])
               pkg.new_named_slice(type_hash['Name'], base_type_hash['Name'], base_type_hash['PkgPath'])
             else
-              pkg.new_enum(type_hash['Name'], type_hash['Kind'], {})
+              pkg.new_enum(type_hash['Name'], type_hash['Kind'])
             end
           end
         end
