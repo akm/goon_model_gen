@@ -1,7 +1,7 @@
 type <%= type.name %> <%= type.base_type.qualified_name %>
 
 const (
-<%-   type.map.each do |key, name| -%>
+<%-   type.each_value_and_name do |key, name| -%>
   <%= name.camelize %> <%= type.name %> = <%= key.inspect %>
 <%-   end -%>
 )

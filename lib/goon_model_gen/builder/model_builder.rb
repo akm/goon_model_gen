@@ -29,7 +29,9 @@ module GoonModelGen
               kind = (t.id_name && t.id_type) ? 'goon' : 'struct'
               procs << Proc.new{ build_sentences('model', kind, t, go_type) }
             when Source::Enum then
-              go_type = pkg.new_enum(t.name, t.base_type, t.map)
+              go_type = pkg.new_enum(t.name, t.base_type).tap do |enum|
+                t.elements.each{|i| enum.add(i.value, i.name) }
+              end
               procs << Proc.new{ build_sentences('model', 'enum', t, go_type) }
             when Source::NamedSlice then
               go_type = pkg.new_named_slice(t.name, t.base_type_name)

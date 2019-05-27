@@ -5,16 +5,36 @@ require "goon_model_gen/golang/type"
 module GoonModelGen
   module Golang
     class Enum < Type
-      attr_reader :base_type_name, :map
+      class Element
+        attr_reader :value, :name
+        def initialize(value, name)
+          @value, @name = value, name
+        end
+      end
+
+      attr_reader :base_type_name, :elements
       attr_reader :base_type
 
       # @param name [String]
       # @param base_type_name [String]
-      # @param map [Hash<Object,String>]
-      def initialize(name, base_type_name, map)
+      def initialize(name, base_type_name)
         super(name)
         @base_type_name = base_type_name
-        @map = map
+        @elements = []
+      end
+
+      # @param value [Object]
+      # @param name [String]
+      def add(value, name)
+        elements << Element.new(value, name)
+      end
+
+      # @yieldparam value [Object]
+      # @yieldparam name [String]
+      def each_value_and_name
+        elements.each do |i|
+          yield(i.value, i.name)
+        end
       end
 
       # @param pkgs [Packages]

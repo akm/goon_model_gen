@@ -1,5 +1,5 @@
 var <%= type.name %>Map = map[<%= type.name %>]string{
-<%-   type.map.each do |key, name| -%>
+<%-   type.each_value_and_name do |key, name| -%>
   <%= name.camelize %>: <%= name.inspect %>,
 <%-   end -%>
 }

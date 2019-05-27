@@ -57,10 +57,9 @@ module GoonModelGen
 
       # @param name [string]
       # @param base_type [String]
-      # @param map [Hash<Object,Hash>] elements of enum from YAML
       # @return [Enum]
-      def new_enum(name, base_type, map)
-        Enum.new(name, base_type, map).tap{|s| add(s) }
+      def new_enum(name, base_type)
+        Enum.new(name, base_type).tap{|s| add(s) }
       end
 
       # @param name [string]
