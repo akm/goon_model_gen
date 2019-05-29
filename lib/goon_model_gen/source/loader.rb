@@ -62,7 +62,9 @@ module GoonModelGen
                   when false then {}
                   when nil, true then nil
                   when Array then v.each_with_object({}){|i,d| d[i] = true}
-                  when Hash then v
+                  when Hash then
+                    v.default = v.delete('default')
+                    v
                   else raise "Invalid generates value in #{k.inspect}: #{v.inspect}"
                   end
               end
