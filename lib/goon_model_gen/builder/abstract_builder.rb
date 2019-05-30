@@ -55,10 +55,11 @@ module GoonModelGen
       # @param go_type [Golang::Type]
       def build_sentences_with(template_base, go_type, generators)
         m2t = method_to_template_for(template_base)
-        generators ||= default_generators_for(template_base)
-        generators.each do |name, suffix|
+        generators ||= m2t.keys.each_with_object({}){|name, d| d[name] = true }
+
+        m2t.each do |name, template|
+          suffix = generators[name]
           next if !suffix
-          template = m2t[name]
           raise "No template found for #{name.inspect}" unless template
           parts = [go_type.name.underscore]
           custom_suffix = false
@@ -72,11 +73,6 @@ module GoonModelGen
             file.new_sentence(File.join(template_base, template), go_type)
           end
         end
-      end
-
-      def default_generators_for(template_base)
-        method_to_template_for(template_base).keys.
-          each_with_object({}){|name, d| d[name] = true }
       end
 
       def method_to_template_map
