@@ -2,7 +2,7 @@
 model = type.map[:model].type
 gen_type = type.map[:gen_type].type
 mappings = type.memo['mappings'] || []
-base_conv_func = type.memo['base_conv_func'] || raise "type has no memo named 'base_conv_func'"
+base_conv_func = type.memo['base_conv_func'] || raise("type #{type.name} has no memo named 'base_conv_func'")
 -%>
 
 

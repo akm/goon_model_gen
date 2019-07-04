@@ -2,8 +2,8 @@
 model = type.map[:model].type
 gen_type = type.map[:gen_type].type
 
-base_conv_func = type.memo['base_conv_func'] || raise "type #{type.name} has no memo named 'base_conv_func'"
-slice_conv_func = type.memo['slice_conv_func'] || raise "type #{type.name} has no memo named 'slice_conv_func'"
+base_conv_func = type.memo['base_conv_func'] || raise("type #{type.name} has no memo named 'base_conv_func'")
+slice_conv_func = type.memo['slice_conv_func'] || raise("type #{type.name} has no memo named 'slice_conv_func'")
 
 model_slice = model.package.types.detect do |t|
   t.is_a?(GoonModelGen::Golang::NamedSlice) &&
