@@ -54,6 +54,8 @@ module GoonModelGen
                 g = conv.gen_type
                 t.add(:model, m.name, m.package_path, m.package_base_path)
                 t.add(:gen_type, g.name, g.package_path, g.package_base_path)
+                t.memo['base_conv_func'] = (m.ordinary_name == g.ordinary_name) ? "#{m.ordinary_name}ToResult" : "#{m.ordinary_name}To#{g.ordinary_name}"
+                t.memo['slice_conv_func'] = (m.ordinary_name == g.ordinary_name) ? "#{m.ordinary_name}SliceToResultSlice" : "#{m.ordinary_name}SliceTo#{g.ordinary_name}Slice"
                 t.memo['mappings'] = conv.mappings
                 unless conv.model.slice_with_ptr.nil?
                   t.memo['model_slice_with_ptr'] = conv.model.slice_with_ptr
