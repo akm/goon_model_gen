@@ -9,6 +9,11 @@ module GoonModelGen
       def initialize(name, package_path)
         @name, @package_path = name, package_path
       end
+
+      def ordinary_name
+        name.include?('.') ? name.split('.').last : name
+      end
+
     end
   end
 end
