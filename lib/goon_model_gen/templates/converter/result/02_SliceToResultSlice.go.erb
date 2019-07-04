@@ -2,6 +2,8 @@
 model = type.map[:model].type
 gen_type = type.map[:gen_type].type
 
+base_conv_func = type.memo['base_conv_func'] || raise "type #{type.name} has no memo named 'base_conv_func'"
+
 model_slice = model.package.types.detect do |t|
   t.is_a?(GoonModelGen::Golang::NamedSlice) &&
   (
@@ -27,7 +29,7 @@ func <%= model.name %>SliceToResultSlice(s *<%= plural_model_type_name %>) *[]*<
   }
   r := []*<%= gen_type.qualified_name(dependencies) %>{}
   for _, m := range *s {
-    r = append(r, <%= model.name %>ToResult(<%= element_is_ptr ? '' : '&' %>m))
+    r = append(r, <%= base_conv_func %>(<%= element_is_ptr ? '' : '&' %>m))
   }
   return &r
 }
