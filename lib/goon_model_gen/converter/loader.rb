@@ -37,7 +37,7 @@ module GoonModelGen
       def load_conv_defs(f, conv_class, hash)
         hash.map do |(name, definition)|
           model = load_model_for_conv(definition['model'])
-          gen_type = TypeRef.new(name, File.join(config.goa_gen_package_path, f.basename))
+          gen_type = TypeRef.new(name, File.join(config.goa_gen_package_path, definition['package_name'] || f.basename))
           mappings = load_mappings(definition['mappings'], conv_class)
           conv_class.new(name, model, gen_type, mappings).tap do |conv|
             conv.file = f
