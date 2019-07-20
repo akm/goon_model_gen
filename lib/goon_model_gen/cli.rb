@@ -65,7 +65,7 @@ module GoonModelGen
     option :inspect, type: :boolean, desc: "Don't generate any file and show package objects if given"
     def converter(*paths)
       loader = Converter::Loader.new(cfg)
-      package_hash = Golang::StructsLoader.new.process(cfg.structs_json_path) # Golang::Packages
+      package_hash = Golang::StructsLoader.new(cfg).process # Golang::Packages
       packages = Golang::Packages.wrap(package_hash.values.flatten)
       converter_package = packages.find_or_new(cfg.converter_package_path)
 

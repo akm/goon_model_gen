@@ -3,6 +3,7 @@ require "goon_model_gen"
 require "erb"
 require "yaml"
 
+require "goon_model_gen/config"
 require "goon_model_gen/golang/packages"
 require "goon_model_gen/golang/datastore_package_factory"
 
@@ -12,9 +13,15 @@ module GoonModelGen
   module Golang
     class StructsLoader
 
-      # @param path [String]
+      # @param cnoofig [GoonModelGen::Config]
+      def initialize(config)
+        @config = config
+      end
+
       # @return [Hash<String,Packages>]
-      def process(path)
+      def process
+        path = config.structs_json_path
+
         erb = ERB.new(::File.read(path), nil, "-")
         erb.filename = path
         txt = erb.result
@@ -24,7 +31,7 @@ module GoonModelGen
           d[key] = build_packages(types)
         end
 
-        whole_packages = Golang::DatastorePackageFactory.new.packages.dup
+        whole_packages = Golang::DatastorePackageFactory.new(config.package_alias_map).packages.dup
         r.values.each do |pkgs|
           whole_packages.add(*pkgs)
         end
