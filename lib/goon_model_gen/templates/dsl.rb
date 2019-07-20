@@ -13,6 +13,7 @@ module GoonModelGen
         package_path = package_or_nil || alias_or_package
         new_alias = package_or_nil ? alias_or_package.to_s : nil
         package_path = package_path.path if package_path.respond_to?(:path)
+        package_path = package_alias_map[package_path]
         return if package_path.blank?
         if dependencies.key?(package_path)
           old_alias = dependencies[package_path]

@@ -1,9 +1,9 @@
 <%-
 import 'context'
 import model.package
-import 'google.golang.org/appengine/datastore'
-import 'google.golang.org/appengine/log'
-import 'github.com/mjibson/goon'
+import 'datastore'
+import 'log'
+import 'goon'
 -%>
 
 func (s *<%= type.name %>) Put(ctx context.Context, m *<%= model.qualified_name %>) (*datastore.Key, error) {
