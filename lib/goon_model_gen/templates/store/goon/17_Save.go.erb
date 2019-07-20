@@ -1,7 +1,7 @@
 <%-
 import 'context'
 import model.package
-import 'google.golang.org/appengine/datastore'
+import 'datastore'
 -%>
 
 func (s *<%= type.name %>) Save(ctx context.Context, m *<%= model.qualified_name %>) (*datastore.Key, error) {

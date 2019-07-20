@@ -1,8 +1,10 @@
-require "goon_model_gen/golang/datastore_supported"
+require "goon_model_gen/golang/datastore_package_factory"
 
-RSpec.describe GoonModelGen::Golang::DatastoreSupported do
+require "goon_model_gen/package_alias_map"
+
+RSpec.describe GoonModelGen::Golang::DatastorePackageFactory do
   context :packages do
-    subject{ GoonModelGen::Golang::DatastoreSupported.packages }
+    subject{ GoonModelGen::Golang::DatastorePackageFactory.new(GoonModelGen::PACKAGE_ALIAS_MAP).packages }
 
     it "can find appengine.GeoPoint" do
       t = subject.type_for("appengine.GeoPoint")

@@ -1,8 +1,8 @@
 <%-
 import 'context'
 import model.package
-import 'google.golang.org/appengine/log'
-import 'github.com/mjibson/goon'
+import 'log'
+import 'goon'
 -%>
 
 func (s *<%= type.name %>) Delete(ctx context.Context, m *<%= model.qualified_name %>) error {

@@ -1,8 +1,8 @@
 <%-
 import 'context'
-import 'google.golang.org/appengine/datastore'
-import 'google.golang.org/appengine/log'
-import 'github.com/mjibson/goon'
+import 'datastore'
+import 'log'
+import 'goon'
 -%>
 
 func (s *<%= type.name %>) CountBy(ctx context.Context, q *datastore.Query) (int, error) {

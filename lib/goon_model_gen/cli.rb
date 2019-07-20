@@ -65,11 +65,11 @@ module GoonModelGen
     option :inspect, type: :boolean, desc: "Don't generate any file and show package objects if given"
     def converter(*paths)
       loader = Converter::Loader.new(cfg)
-      package_hash = Golang::StructsLoader.new.process(cfg.structs_json_path) # Golang::Packages
+      package_hash = Golang::StructsLoader.new(cfg).process # Golang::Packages
       packages = Golang::Packages.wrap(package_hash.values.flatten)
       converter_package = packages.find_or_new(cfg.converter_package_path)
 
-      b = Builder::ConverterBuilder.new(cfg.converter_package_path, loader, Golang::Packages.new.add(*packages))
+      b = Builder::ConverterBuilder.new(cfg, loader, Golang::Packages.new.add(*packages))
       conv_packages = b.build(paths)
 
       if options[:inspect]
@@ -97,15 +97,15 @@ module GoonModelGen
       # @return [Array<Golang::Package>]
       def build_model_objects(paths)
         context = Source::Loader.new.process(paths)
-        Builder::ModelBuilder.new(cfg.model_package_path).build(context)
+        Builder::ModelBuilder.new(cfg).build(context)
       end
 
       # @param paths [Array<String>] Source::Context
       # @return [Array<Golang::Package>]
       def build_store_packages(paths)
         context = Source::Loader.new.process(paths)
-        model_packages = Builder::ModelBuilder.new(cfg.model_package_path).build(context)
-        store_packages = Builder::StoreBuilder.new(cfg.store_package_path, model_packages).build(context)
+        model_packages = Builder::ModelBuilder.new(cfg).build(context)
+        store_packages = Builder::StoreBuilder.new(cfg, model_packages).build(context)
         return store_packages
       end
 
@@ -123,7 +123,7 @@ module GoonModelGen
 
       # @return [Golang::Package]
       def validation_packages
-        Builder::ValidationBuilder.new(cfg.validation_package_path).build
+        Builder::ValidationBuilder.new(cfg).build
       end
     end
   end

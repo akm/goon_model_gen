@@ -5,6 +5,7 @@ require "yaml"
 require "pathname"
 
 require "goon_model_gen/golang"
+require "goon_model_gen/package_alias_map"
 
 module GoonModelGen
   class Config
@@ -26,6 +27,7 @@ module GoonModelGen
       structs_json_path
       validator_package_path
       version_comment
+      package_alias_map
     ].freeze
 
     attr_accessor *ATTRIBUTES
@@ -46,6 +48,9 @@ module GoonModelGen
       @structs_gen_dir ||= "./cmd/structs"
       @structs_json_path ||= "./structs.json"
       @version_comment ||= false
+      @package_alias_map ||= {}
+      @package_alias_map = PACKAGE_ALIAS_MAP.merge(@package_alias_map)
+      @package_alias_map.default_proc = proc{|hash,key| key.to_s}
       self
     end
 

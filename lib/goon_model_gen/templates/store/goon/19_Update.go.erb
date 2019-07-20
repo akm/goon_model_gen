@@ -2,8 +2,8 @@
 import 'context'
 import 'fmt'
 import model.package
-import 'google.golang.org/appengine/datastore'
-import 'google.golang.org/appengine/log'
+import 'datastore'
+import 'log'
 -%>
 
 func (s *<%= type.name %>) Update(ctx context.Context, m *<%= model.qualified_name %>) (*datastore.Key, error) {

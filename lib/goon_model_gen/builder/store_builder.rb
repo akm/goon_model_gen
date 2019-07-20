@@ -1,11 +1,12 @@
 require "goon_model_gen"
 
+require "goon_model_gen/config"
 require "goon_model_gen/builder/abstract_builder"
 
 require "goon_model_gen/source/struct"
 
 require "goon_model_gen/golang/package"
-require "goon_model_gen/golang/datastore_supported"
+require "goon_model_gen/golang/datastore_package_factory"
 
 
 module GoonModelGen
@@ -13,10 +14,10 @@ module GoonModelGen
     class StoreBuilder < AbstractBuilder
       attr_reader :model_packages
 
-      # @param base_package_path [String]
+      # @param config [GoonModelGen::Config]
       # @param model_packages [Golang::Packages]
-      def initialize(base_package_path, model_packages)
-        super(base_package_path)
+      def initialize(config, model_packages)
+        super(config, config.store_package_path)
         @package_suffix = "_store"
         @model_packages = model_packages
       end
@@ -44,7 +45,7 @@ module GoonModelGen
 
       # @param pkgs [Golang::Packages]
       def resolve_type_names(pkgs)
-        pkgs.resolve_type_names(Golang::DatastoreSupported.packages.dup.add(model_packages))
+        pkgs.resolve_type_names(Golang::DatastorePackageFactory.new(config.package_alias_map).packages.dup.add(model_packages))
       end
 
     end

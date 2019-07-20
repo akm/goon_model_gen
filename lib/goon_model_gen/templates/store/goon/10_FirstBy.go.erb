@@ -1,7 +1,7 @@
 <%-
 import 'context'
 import model.package
-import 'google.golang.org/appengine/datastore'
+import 'datastore'
 -%>
 
 func (s *<%= type.name %>) FirstBy(ctx context.Context, q *datastore.Query) (*<%= model.qualified_name %>, error) {

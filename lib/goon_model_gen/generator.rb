@@ -15,6 +15,7 @@ module GoonModelGen
     attr_accessor :version_comment # false/true
     attr_accessor :force, :skip    # false/true
     attr_accessor :overwrite_custom_file   # false/true
+    attr_accessor :package_alias_map
 
     DEFAULT_TEMPLATES_DIR = File.expand_path('../templates', __FILE__)
 
@@ -109,7 +110,7 @@ module GoonModelGen
 
     # @param cfg [Config]
     def load_config(cfg)
-      [:gofmt_disabled, :version_comment].each do |key|
+      [:gofmt_disabled, :version_comment, :package_alias_map].each do |key|
         self.send("#{key}=", cfg.send(key))
       end
     end
