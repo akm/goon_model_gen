@@ -8,7 +8,7 @@ require "goon_model_gen/source/named_slice"
 
 require "goon_model_gen/golang/package"
 require "goon_model_gen/golang/packages"
-require "goon_model_gen/golang/datastore_supported"
+require "goon_model_gen/golang/datastore_package_factory"
 
 require "active_support/core_ext/string"
 
@@ -46,7 +46,7 @@ module GoonModelGen
 
       # @param pkgs [Golang::Packages]
       def resolve_type_names(pkgs)
-        pkgs.resolve_type_names(Golang::DatastoreSupported.packages)
+        pkgs.resolve_type_names(Golang::DatastorePackageFactory.new.packages)
       end
 
       # @param t [Source::Struct]

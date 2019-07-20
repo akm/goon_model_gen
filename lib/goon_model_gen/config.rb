@@ -26,6 +26,7 @@ module GoonModelGen
       structs_json_path
       validator_package_path
       version_comment
+      package_alias_map
     ].freeze
 
     attr_accessor *ATTRIBUTES
@@ -46,6 +47,7 @@ module GoonModelGen
       @structs_gen_dir ||= "./cmd/structs"
       @structs_json_path ||= "./structs.json"
       @version_comment ||= false
+      @package_alias_map = {}
       self
     end
 

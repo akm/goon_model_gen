@@ -4,7 +4,7 @@ require "erb"
 require "yaml"
 
 require "goon_model_gen/golang/packages"
-require "goon_model_gen/golang/datastore_supported"
+require "goon_model_gen/golang/datastore_package_factory"
 
 require "active_support/core_ext/string"
 
@@ -24,7 +24,7 @@ module GoonModelGen
           d[key] = build_packages(types)
         end
 
-        whole_packages = Golang::DatastoreSupported.packages.dup
+        whole_packages = Golang::DatastorePackageFactory.new.packages.dup
         r.values.each do |pkgs|
           whole_packages.add(*pkgs)
         end
