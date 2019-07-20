@@ -1,15 +1,19 @@
 require "goon_model_gen"
 
+require "goon_model_gen/config"
 require "goon_model_gen/golang/packages"
 
 module GoonModelGen
   module Builder
     class AbstractBuilder
+      attr_reader :config
       attr_reader :base_package_path
       attr_accessor :package_suffix
 
+      # @param config [GoonModelGen::Config]
       # @param base_package_path [String]
-      def initialize(base_package_path)
+      def initialize(config, base_package_path)
+        @config = config
         @base_package_path = base_package_path
       end
 

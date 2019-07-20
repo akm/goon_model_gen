@@ -1,5 +1,6 @@
 require "goon_model_gen"
 
+require "goon_model_gen/config"
 require "goon_model_gen/builder/abstract_builder"
 
 require "goon_model_gen/source/struct"
@@ -15,6 +16,11 @@ require "active_support/core_ext/string"
 module GoonModelGen
   module Builder
     class ModelBuilder < AbstractBuilder
+
+      # @param config [GoonModelGen::Config]
+      def initialize(config)
+        super(config, config.model_package_path)
+      end
 
       # @param package_path [String]
       # @param types [Array<Source::Type>]
@@ -46,7 +52,7 @@ module GoonModelGen
 
       # @param pkgs [Golang::Packages]
       def resolve_type_names(pkgs)
-        pkgs.resolve_type_names(Golang::DatastorePackageFactory.new.packages)
+        pkgs.resolve_type_names(Golang::DatastorePackageFactory.new(config.package_alias_map).packages)
       end
 
       # @param t [Source::Struct]

@@ -9,9 +9,13 @@ require "goon_model_gen/golang/builtin"
 module GoonModelGen
   module Golang
     class DatastorePackageFactory
+      attr_reader :package_alias_map
+      def initialize(package_alias_map)
+        @package_alias_map = package_alias_map
+      end
 
       def datastore
-        @datastore ||= Package.new('google.golang.org/appengine/datastore').tap do |pkg|
+        @datastore ||= Package.new(package_alias_map['datastore']).tap do |pkg|
           pkg.add(DatastoreSupported.new('ByteString'))
           pkg.add(DatastoreSupported.new('Key'))
         end
@@ -24,7 +28,7 @@ module GoonModelGen
       end
 
       def appengine
-        @appengine ||= Package.new('google.golang.org/appengine').tap do |pkg|
+        @appengine ||= Package.new(package_alias_map['appengine']).tap do |pkg|
           pkg.add(DatastoreSupported.new('BlobKey'))
           pkg.add(DatastoreSupported.new('GeoPoint'))
         end

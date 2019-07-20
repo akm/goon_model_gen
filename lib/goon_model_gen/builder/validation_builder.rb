@@ -1,5 +1,6 @@
 require "goon_model_gen"
 
+require "goon_model_gen/config"
 require "goon_model_gen/builder/abstract_builder"
 
 require "goon_model_gen/golang/packages"
@@ -9,6 +10,11 @@ require "goon_model_gen/golang/datastore_package_factory"
 module GoonModelGen
   module Builder
     class ValidationBuilder < AbstractBuilder
+
+      # @param config [GoonModelGen::Config]
+      def initialize(config)
+        super(config, config.validation_package_path)
+      end
 
       # @return [Golang::Packages]
       def build(*)
@@ -24,7 +30,7 @@ module GoonModelGen
 
       # @param pkgs [Golang::Packages]
       def resolve_type_names(pkgs)
-        pkgs.resolve_type_names(Golang::DatastorePackageFactory.new.packages)
+        pkgs.resolve_type_names(Golang::DatastorePackageFactory.new(config.package_alias_map).packages)
       end
 
     end

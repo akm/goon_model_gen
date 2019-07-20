@@ -1,5 +1,6 @@
 require "goon_model_gen"
 
+require "goon_model_gen/config"
 require "goon_model_gen/builder/abstract_builder"
 
 require "goon_model_gen/source/struct"
@@ -14,11 +15,11 @@ module GoonModelGen
       attr_reader :loader
       attr_reader :packages
 
-      # @param base_package_path [String]
+      # @param config [GoonModelGen::Config]
       # @param loader [Converter::Loader]
       # @param packages [Golang::Packages]
-      def initialize(base_package_path, loader, packages)
-        super(base_package_path)
+      def initialize(config, loader, packages)
+        super(config, config.converter_package_path)
         @package_suffix = "_conv"
         @loader = loader
         @packages = packages
@@ -70,7 +71,7 @@ module GoonModelGen
 
       # @param pkgs [Golang::Packages]
       def resolve_type_names(pkgs)
-        pkgs.resolve_type_names(Golang::DatastorePackageFactory.new.packages.dup.add(packages))
+        pkgs.resolve_type_names(Golang::DatastorePackageFactory.new(config.package_alias_map).packages.dup.add(packages))
       end
 
     end
