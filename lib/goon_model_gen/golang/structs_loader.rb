@@ -12,6 +12,7 @@ require "active_support/core_ext/string"
 module GoonModelGen
   module Golang
     class StructsLoader
+      attr_reader :config
 
       # @param cnoofig [GoonModelGen::Config]
       def initialize(config)
