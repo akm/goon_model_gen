@@ -26,12 +26,17 @@ mappings.each do |mapping|
 <%-
   mfield = arg_fields.first
   arg = "m.#{mfield.name}"
-  if mfield.struct? || mfield.slice?
-    arg = "&#{arg}"
-    raise "Struct field or Slice field requires func for mapping" if mapping.func.blank?
+  if mfield.type.name == rfield.type.name
+    right_side_main = arg
+    right_side = right_side_main
+  else
+    if mfield.struct? || mfield.slice?
+      raise "Struct field or Slice field requires func for mapping" if mapping.func.blank?
+      arg = "&#{arg}"
+    end
+    right_side_main = mapping.func ? "#{mapping.func}(#{arg})" : arg
+    right_side = (rfield.slice? ? '*' : '') + right_side_main
   end
-  right_side_main = mapping.func ? "#{mapping.func}(#{arg})" : arg
-  right_side = (rfield.slice? ? '*' : '') + right_side_main
 -%>
 <%- if rfield.value_ptr? -%>
   {
