@@ -72,7 +72,7 @@ mappings.each do |mapping|
 <%-   if !mapping.returns_error # => requries_context is false -%>
   m.<%= mfield.name %> = <%= mapping.func %>(<%= arg_str %>)
 <%-   else
-        arg_str = (mapping.requries_context ? 'ctx, ' : '') + arg_str
+        arg_str = (mapping.requires_context ? 'ctx, ' : '') + arg_str
 -%>
   if v, err := <%= mapping.func %>(<%= arg_str %>); err != nil {
     return err
