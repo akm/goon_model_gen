@@ -40,6 +40,11 @@ module GoonModelGen
           item.resolve(pkgs)
         end
       end
+
+      def fields
+        map.values.map{|i| i.respond_to?(:fields) ? i.fields : []}.flatten
+      end
+
     end
   end
 end
